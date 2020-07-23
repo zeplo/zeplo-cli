@@ -1,12 +1,13 @@
+import { CommandModule } from 'yargs'
 import request from '../../helpers/request'
 import output from '../../helpers/output'
 import { setBasicConfig } from '../../helpers/config'
 
-export async function handler (args) {
+export async function handler (args: any) {
   const space = await request(args, {
     method: 'POST',
     url: '/spaces',
-    body: {
+    data: {
       name: args.name,
     },
   })
@@ -21,7 +22,7 @@ export async function handler (args) {
 
 export default {
   command: 'create [name]',
-  desc: 'Create a new space',
+  desc: 'Create a new workspace',
   handler,
   builder: (yargs) => {
     return yargs
@@ -33,4 +34,4 @@ export default {
         describe: 'Set the new space as the default',
       })
   },
-}
+} as CommandModule

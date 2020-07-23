@@ -3,26 +3,30 @@ import fs from 'fs-extra'
 import path from 'path'
 import loadJsonFile from 'load-json-file'
 import writeJsonFile from 'write-json-file'
-import get from 'lodash/get'
-import set from 'lodash/set'
+import { get, set } from 'lodash'
+import { AuthConfig } from '../types'
 
 const { CONFIG_DIR, CONFIG_SUFFIX = '' } = process.env
 
-const defaultAuth = {
+const DEFAULT_AUTH_CONFIG = {
   _: 'This is your Ralley credentials file. DON\'T SHARE!',
   credentials: {},
+  defaultAuth: null,
 }
 
-const configSuffix = args => (args.endpoint ? `[${args.endpoint.replace(/https?:\/\//, '')}]` : CONFIG_SUFFIX)
+const configSuffix = (args: any) =>
+  (args.endpoint
+    ? `[${args.endpoint.replace(/https?:\/\//, '')}]`
+    : CONFIG_SUFFIX)
 
-const getAuthConfigPath = (args) => {
+const getAuthConfigPath = (args: any) => {
   return path.resolve(getConfigPath(args), `./auth${configSuffix(args)}.json`)
 }
 
-const getBasicConfigPath = args =>
+const getBasicConfigPath = (args: any) =>
   path.resolve(getConfigPath(args), `./config${configSuffix(args)}.json`)
 
-export default function getConfigPath (args) {
+export default function getConfigPath (args: any) {
   const { configPath } = args
   if (configPath) {
     return path.resolve(configPath)
@@ -30,20 +34,20 @@ export default function getConfigPath (args) {
   return path.resolve(homedir(), `./${CONFIG_DIR}`)
 }
 
-export async function getAuthConfig (args) {
+export async function getAuthConfig (args: any): Promise<AuthConfig|null> {
   const authPath = getAuthConfigPath(args)
   return fs.existsSync(authPath)
     ? loadJsonFile(authPath)
     : null
 }
 
-export async function addAuthConfig (args, username, token) {
+export async function addAuthConfig (args: any, username: string, token: string) {
   const authPath = getAuthConfigPath(args)
 
   let auth = await getAuthConfig(args)
 
   if (!auth) {
-    auth = defaultAuth
+    auth = DEFAULT_AUTH_CONFIG
   }
 
   auth.credentials = {
@@ -60,7 +64,7 @@ export async function addAuthConfig (args, username, token) {
   return writeJsonFile(authPath, auth)
 }
 
-export async function removeAuthConfig (args) {
+export async function removeAuthConfig (args: any) {
   const authPath = getAuthConfigPath(args)
 
   const auth = await getAuthConfig(args)
@@ -74,7 +78,7 @@ export async function removeAuthConfig (args) {
   return writeJsonFile(authPath, auth)
 }
 
-export async function setBasicConfig (args, key, value) {
+export async function setBasicConfig (args: any, key: string, value: any) {
   const configPath = getBasicConfigPath(args)
   let json = {}
   if (fs.existsSync(configPath)) {
@@ -87,7 +91,7 @@ export async function setBasicConfig (args, key, value) {
   return value
 }
 
-export async function getBasicConfig (args, key) {
+export async function getBasicConfig (args: any, key: string) {
   const configPath = getBasicConfigPath(args)
   if (!fs.existsSync(configPath)) return null
   const json = await fs.readJson(configPath)

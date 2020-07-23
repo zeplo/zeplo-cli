@@ -6,6 +6,7 @@
 		"moduleResolution": "node",
 		// Process & infer types from .js files.
 		"allowJs": true,
+		"resolveJsonModule": true,
 		// "checkJs": true,
 		// Don't emit; allow Babel to transform files.
 		"noEmit": true,

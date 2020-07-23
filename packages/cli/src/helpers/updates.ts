@@ -1,4 +1,4 @@
-import request from 'request-promise-native'
+import axios from 'axios'
 import semver from 'semver'
 import chalk from 'chalk'
 import output from './output'
@@ -8,29 +8,28 @@ import pkg from '../../package.json'
 const CLI_RELEASES_URL = 'https://ralley-cli-releases.ralley.io/'
 const CHECK_EVERY_HOUR = 60 * 60 * 1000
 
-export default async function updateCheck (args) {
+export default async function updateCheck (args: any) {
   const newVersion = await updateAvailable(args)
   if (newVersion) {
-    output.space()
-    output.accent(`${chalk.white.bgRed.bold('UPDATE AVAILABLE')} Ralley CLI latest version is ${newVersion} (installed v${pkg.version})`)
-    output.accent(`Upgrade details can be found at ${chalk.cyan('https://ralley.io/docs/install')}`)
-    output.space()
+    output.space(args)
+    output.accent(`${chalk.white.bgRed.bold('UPDATE AVAILABLE')} Ralley CLI latest version is ${newVersion} (installed v${pkg.version})`, args)
+    output.accent(`Upgrade details can be found at ${chalk.cyan('https://ralley.io/docs/install')}`, args)
+    output.space(args)
   }
   return newVersion
 }
 
-export async function updateAvailable (args) {
+export async function updateAvailable (args: any) {
   const config = await getBasicConfig(args, 'cli') || {}
 
   if (config.lastUpdateCheck && Date.now() < config.lastUpdateCheck + CHECK_EVERY_HOUR) {
     return null
   }
 
-  const res = await request({
+  const res = await axios({
     url: CLI_RELEASES_URL,
     method: 'GET',
-    json: true,
-  }).catch((err) => {
+  }).catch((err: Error) => {
     if (process.env.NODE_ENV === 'development') {
       throw err
     }
@@ -38,12 +37,14 @@ export async function updateAvailable (args) {
     return null
   })
 
+  const data = res?.data
+
   // Ignore if no result
-  if (!res || !res.stable) return null
+  if (!data || !data.stable) return null
 
   // Check versions
-  if (semver.gt(res.stable.tag, pkg.version)) {
-    return res.stable.tag
+  if (semver.gt(data.stable.tag, pkg.version)) {
+    return data.stable.tag
   }
 
   // Stop performing checks for 1 hr

@@ -1,5 +1,5 @@
 {
-  "name": "root",
+  "name": "@ralley/cli-root",
   "private": true,
   "scripts": {
     "push": "lerna publish"

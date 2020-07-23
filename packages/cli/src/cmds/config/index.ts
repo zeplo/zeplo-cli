@@ -1,5 +1,5 @@
-// import yargs from 'yargs'
-import get from './get'
+import { CommandModule } from 'yargs'
+import get, { handler } from './get'
 import set from './set'
 
 export default {
@@ -10,4 +10,5 @@ export default {
       .command(set)
       .command(get)
   },
-}
+  handler,
+} as CommandModule

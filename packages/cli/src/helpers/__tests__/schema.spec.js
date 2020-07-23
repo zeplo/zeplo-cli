@@ -1,4 +1,4 @@
-import validate from '@zeplo/validator'
+import validate from '@ralley/validator'
 import schema from '../schema'
 
 describe('Validate config', () => {

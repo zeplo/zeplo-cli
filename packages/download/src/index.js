@@ -31,17 +31,17 @@ if (detectAlpine()) platform = 'alpine'
 const packageDir = path.join(__dirname, '..', '..')
 const packageJSON = readPkg.sync(packageDir)
 
-const zeplo = path.join(__dirname, 'zeplo')
-const targetWin32 = path.join(__dirname, 'zeplo.exe')
-const target = platform === 'win32' ? targetWin32 : zeplo
+const ralley = path.join(__dirname, 'ralley')
+const targetWin32 = path.join(__dirname, 'ralley.exe')
+const target = platform === 'win32' ? targetWin32 : ralley
 const partial = `${target}.partial`
 const backup = `${target}.${packageJSON.version}.backup`
 
 const platformToName = {
-  alpine: 'zeplo-alpine',
-  darwin: 'zeplo-macos',
-  linux: 'zeplo-linux',
-  win32: 'zeplo-win.exe',
+  alpine: 'ralley-alpine',
+  darwin: 'ralley-macos',
+  linux: 'ralley-linux',
+  win32: 'ralley-win.exe',
 }
 
 function detectAlpine () {
@@ -54,14 +54,14 @@ function detectAlpine () {
 async function download () {
   try {
     fs.writeFileSync(
-      zeplo,
+      ralley,
       '#!/usr/bin/env node\n' +
-        'console.log("Please wait until the \'@zeplo/cli\' installation completes!")\n',
+        'console.log("Please wait until the \'@ralley/cli\' installation completes!")\n',
     )
   } catch (err) {
     if (err.code === 'EACCES') {
-      warn('Please try installing Zeplo CLI again with the `--unsafe-perm` option.')
-      info('Example: `npm i -g --unsafe-perm @zeplo/cli`')
+      warn('Please try installing Ralley CLI again with the `--unsafe-perm` option.')
+      info('Example: `npm i -g --unsafe-perm @ralley/cli`')
 
       process.exit()
     }
@@ -71,26 +71,26 @@ async function download () {
 
   onDeath(() => {
     fs.writeFileSync(
-      zeplo,
+      ralley,
       '#!/usr/bin/env node\n' +
-        'console.log("The \'zeplo\' installation did not complete successfully.")\n' +
-        'console.log("Please run \'npm i -g @zeplo/cli\' to reinstall!")\n',
+        'console.log("The \'ralley\' installation did not complete successfully.")\n' +
+        'console.log("Please run \'npm i -g @ralley/cli\' to reinstall!")\n',
     )
     process.exit()
   })
 
-  info('For the source code, check out: https://github.com/zeplo/zeplo-cli')
+  info('For the source code, check out: https://github.com/ralley/ralley-cli')
 
   // Print an empty line
   console.log('')
 
   await retry(async () => {
-    enableProgress(`Downloading Zeplo CLI ${packageJSON.version}`)
+    enableProgress(`Downloading Ralley CLI ${packageJSON.version}`)
     showProgress(0)
 
     try {
       const name = platformToName[platform]
-      const url = `https://github.com/zeplo/zeplo-cli/releases/download/v${packageJSON.version}/${name}.gz`
+      const url = `https://github.com/ralley/ralley-cli/releases/download/v${packageJSON.version}/${name}.gz`
       const resp = await fetch(url, { compress: false })
 
       if (resp.status !== 200) {
@@ -148,7 +148,7 @@ function modifyGitBashFile (content) {
       '    *CYGWIN*) basedir=`cygpath -w "$basedir"`;;\n' +
       'esac\n' +
       '\n'}${
-      content.replace('download/dist/zeplo"', 'download/dist/zeplo.exe"')}`)
+      content.replace('download/dist/ralley"', 'download/dist/ralley.exe"')}`)
 }
 
 async function main () {
@@ -160,12 +160,12 @@ async function main () {
 
   if (platform === 'win32') {
     try {
-      fs.writeFileSync(zeplo, '')
+      fs.writeFileSync(ralley, '')
       // Workaround for https://github.com/npm/cmd-shim/pull/25
       const globalPath = path.dirname(await which('npm'))
-      let gitBashFile = path.join(globalPath, 'zeplo')
+      let gitBashFile = path.join(globalPath, 'ralley')
       if (!fs.existsSync(gitBashFile)) {
-        gitBashFile = path.join(process.env.APPDATA, 'npm/zeplo')
+        gitBashFile = path.join(process.env.APPDATA, 'npm/ralley')
       }
 
       fs.writeFileSync(gitBashFile, modifyGitBashFile(fs.readFileSync(gitBashFile, 'utf8')))
@@ -176,7 +176,7 @@ async function main () {
       }
     }
   } else {
-    plusxSync(zeplo)
+    plusxSync(ralley)
   }
 }
 

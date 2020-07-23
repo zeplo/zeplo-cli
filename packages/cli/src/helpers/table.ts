@@ -1,5 +1,5 @@
 import chalk from 'chalk'
-import Table from 'cli-table2'
+import Table, { CellValue, HorizontalTable } from 'cli-table2'
 
 const chars = {
   top: '',
@@ -23,7 +23,14 @@ const NO_RESOURCE_MSG = `
   0 resources found.
 `
 
-export default function createTable (columns, rows) {
+export interface CreateTableColumn {
+  name: string
+  key: string|((row: any) => string)
+}
+
+export type CreateTableRow = Record<string, CellValue>
+
+export default function createTable (columns: CreateTableColumn[], rows: CreateTableRow[]) {
   if (!rows || rows.length === 0) {
     return NO_RESOURCE_MSG
   }
@@ -31,24 +38,17 @@ export default function createTable (columns, rows) {
   const data = rows.map(row => columns.map(({ key }) => {
     return typeof key === 'function' ? key(row) : row[key]
   }))
-  // const colWidths = columns.map(({ width, maxWidth, minWidth }, i) => {
-  //   if (width) return width
-  //   if (maxWidth || minWidth) {
-  //     const max = data.reduce((agg, val) => Math.max(val[i].length, agg), 0)
-  //     console.log(max)
-  //     return Math.min(Math.max(minWidth || 10, max), maxWidth || 100)
-  //   }
-  //   return 10
-  // })
+
   const table = new Table({
     head,
-    // colWidths,
     style: {
       head: [],
-      borders: ['black'],
+      border: ['black'],
     },
     chars,
-  })
+  }) as HorizontalTable
+
   table.push(...data)
+
   return table.toString()
 }

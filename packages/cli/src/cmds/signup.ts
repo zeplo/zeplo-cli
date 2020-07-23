@@ -1,20 +1,28 @@
+import { CommandModule } from 'yargs'
 import chalk from 'chalk'
 import prompt from 'prompt'
-import { promisify } from 'promise-callbacks'
+import util from 'util'
 import request from '../helpers/request'
 import output from '../helpers/output'
 import { addAuthConfig } from '../helpers/config'
 
-const promptGet = promisify.method(prompt, 'get')
+const promptGet = util.promisify(prompt.get)
 
 const schema = {
   properties: {
+    name: {
+      description: 'Name',
+    },
+    email: {
+      description: 'E-mail',
+    },
     username: {
       description: 'Username',
       // pattern: /^[0-9a-zA-Z@.\-]+$/,
       // message: 'Username should be your e-mail address',
       required: true,
     },
+    // TODO: min length for password
     password: {
       description: 'Password',
       hidden: true,
@@ -22,38 +30,39 @@ const schema = {
   },
 }
 
-async function handler (args) {
+async function handler (args: any) {
   // Get the login details
   prompt.start()
 
-  const { username, password } = await promptGet(schema)
+  const {
+    email, password, username, name,
+  } = await promptGet(schema)
 
-  const login = await request(args, {
+  const signup = await request(args, {
     method: 'POST',
-    url: '/login',
-    body: {
+    url: '/signup',
+    data: {
+      name,
       username,
+      email,
       password,
     },
-  }, false).catch((err) => {
-    if (err.statusCode > 499) throw err
-    throw new Error(chalk.red('Invalid credentials'))
   })
 
-  if (login) {
-    await addAuthConfig(args, username, login.token, login.username)
+  if (signup) {
+    await addAuthConfig(args, email, signup.token)
   }
 
-  output(chalk.green('Successful login'), args)
+  output(chalk.green('Successful signup! Welcome!'), args)
 }
 
 export default {
-  command: 'login',
-  desc: 'Login to Zeplo',
+  command: 'signup',
+  desc: 'Signup to Ralley',
   builder: {
     dir: {
       default: '.',
     },
   },
   handler,
-}
+} as CommandModule

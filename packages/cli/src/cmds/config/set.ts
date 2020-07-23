@@ -1,7 +1,7 @@
 import { setBasicConfig } from '../../helpers/config'
 import output from '../../helpers/output'
 
-export async function handler (args) {
+export async function handler (args: any) {
   await setBasicConfig(args, `user.${args.key}`, args.value)
 
   output.space(args)

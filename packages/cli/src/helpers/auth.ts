@@ -1,6 +1,7 @@
 import chalk from 'chalk'
 import handleError from './errors'
 import { getAuthConfig } from './config'
+import { AuthArgs } from '../types'
 
 const NO_TOKEN_MSG = `
   ${chalk.red('No authentication token')}
@@ -9,7 +10,7 @@ const NO_TOKEN_MSG = `
   Or ${chalk.cyanBright('$ ralley signup')} to create a new account
 `
 
-export default async function getAuth (args, requireAuth = true) {
+export default async function getAuth (args: AuthArgs, requireAuth = true) {
   let token = args.t || args.token
 
   if (!token) {

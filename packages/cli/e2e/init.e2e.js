@@ -46,14 +46,14 @@ xdescribe('init.e2e', () => {
     expect(stdout).toMatchSnapshot()
   })
 
-  test('init creates .zeplorc file with service name', async () => {
-    const zeplorc = path.resolve(fixturesPath, './bash-run/.zeplorc')
+  test('init creates .ralleyrc file with service name', async () => {
+    const ralleyrc = path.resolve(fixturesPath, './bash-run/.ralleyrc')
     await exec.run('init', './e2e/fixtures/init/bash-run', '--template', 'bash-run', '--name', 'bash-name').wait()
 
-    const exists = await fs.pathExists(zeplorc)
+    const exists = await fs.pathExists(ralleyrc)
     expect(exists).toBe(true)
 
-    const json = await fs.readFile(zeplorc, 'utf8')
+    const json = await fs.readFile(ralleyrc, 'utf8')
     expect(json).toMatchSnapshot()
   })
 })

@@ -11,46 +11,46 @@ describe('service.config.spec', () => {
     await remove('fixtures/service-config')
   })
 
-  test('gets config for zeplo.json file', async () => {
-    await createFile(args.dir, 'zeplo.json', '{"name": "zeplo-json-name"}')
+  test('gets config for ralley.json file', async () => {
+    await createFile(args.dir, 'ralley.json', '{"name": "ralley-json-name"}')
     const config = await getServiceConfig(args)
     expect(config).toEqual({
-      name: 'zeplo-json-name',
+      name: 'ralley-json-name',
     })
   })
 
-  test('gets config for zeplo.yml file', async () => {
-    await createFile(args.dir, 'zeplo.yml', 'name: zeplo-yml-name')
+  test('gets config for ralley.yml file', async () => {
+    await createFile(args.dir, 'ralley.yml', 'name: ralley-yml-name')
     const config = await getServiceConfig(args)
     expect(config).toEqual({
-      name: 'zeplo-yml-name',
+      name: 'ralley-yml-name',
     })
   })
 
-  test('gets config for .zeplorc file', async () => {
-    await createFile(args.dir, 'zeplo.yml', 'name: zeplo-yml-name')
-    await createFile(args.dir, '.zeplorc', '{"latest":{"name":"zeplo-rc-name"}}')
+  test('gets config for .ralleyrc file', async () => {
+    await createFile(args.dir, 'ralley.yml', 'name: ralley-yml-name')
+    await createFile(args.dir, '.ralleyrc', '{"latest":{"name":"ralley-rc-name"}}')
     const config = await getServiceConfig(args)
     expect(config).toEqual({
-      name: 'zeplo-rc-name',
+      name: 'ralley-rc-name',
     })
   })
 
-  test('gets config for .zeplorc file with tag', async () => {
-    await createFile(args.dir, 'zeplo.yml', 'name: zeplo-yml-name')
-    await createFile(args.dir, '.zeplorc', '{"prod":{"name":"zeplo-rc-name-prod"}}')
+  test('gets config for .ralleyrc file with tag', async () => {
+    await createFile(args.dir, 'ralley.yml', 'name: ralley-yml-name')
+    await createFile(args.dir, '.ralleyrc', '{"prod":{"name":"ralley-rc-name-prod"}}')
     args.tag = 'prod'
     const config = await getServiceConfig(args)
     expect(config).toEqual({
-      name: 'zeplo-rc-name-prod',
+      name: 'ralley-rc-name-prod',
     })
   })
 
   test('gets package file', async () => {
-    await createFile(args.dir, 'package.json', '{"name":"zeplo-package-json","zeplo":{"command": "test"}}')
+    await createFile(args.dir, 'package.json', '{"name":"ralley-package-json","ralley":{"command": "test"}}')
     const config = await getServiceConfig(args)
     expect(config).toEqual({
-      name: 'zeplo-package-json',
+      name: 'ralley-package-json',
       command: 'test',
     })
   })
