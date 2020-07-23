@@ -3,7 +3,7 @@
   "version": "0.1.1",
   "description": "CLI for Ralley",
   "preferGlobal": true,
-  "repository": "https://github.com/ralley/ralley-cli",
+  "repository": "https://github.com/ralleyio/ralley-cli",
   "author": "Calum Moore",
   "license": "MIT",
   "files": [
@@ -12,7 +12,7 @@
   ],
   "scripts": {
     "build": "babel ./src --ignore .spec.js -d dist",
-    "prepublish": "yarn run build && cp default.js dist/ralley",
+    "prepare": "yarn run build && cp default.js dist/ralley",
     "postinstall": "node ./install.js",
     "fix": "yarn eslint \"./src/**/*.{js,jsx}\" --fix"
   },
@@ -54,5 +54,6 @@
     "pkg": "4.3.0",
     "webpack": "^4.17.2",
     "webpack-cli": "^3.1.0"
-  }
+  },
+  "gitHead": "d825a519a2afdbd4fda32a2a0afd84ab8606b6cd"
 }

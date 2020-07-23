@@ -79,7 +79,7 @@ async function download () {
     process.exit()
   })
 
-  info('For the source code, check out: https://github.com/ralley/ralley-cli')
+  info('For the source code, check out: https://github.com/ralleyio/ralley-cli')
 
   // Print an empty line
   console.log('')
@@ -90,7 +90,7 @@ async function download () {
 
     try {
       const name = platformToName[platform]
-      const url = `https://github.com/ralley/ralley-cli/releases/download/v${packageJSON.version}/${name}.gz`
+      const url = `https://github.com/ralleyio/ralley-cli/releases/download/v${packageJSON.version}/${name}.gz`
       const resp = await fetch(url, { compress: false })
 
       if (resp.status !== 200) {

@@ -2,7 +2,7 @@
   "name": "@ralley/cli-builder",
   "version": "0.1.1",
   "description": "CLI for Ralley",
-  "repository": "https://github.com/ralley/ralley-cli",
+  "repository": "https://github.com/ralleyio/ralley-cli",
   "author": "Calum Moore",
   "license": "MIT",
   "private": true,
@@ -22,7 +22,7 @@
     "cmd": "yarn build && NODE_ENV=development node ./dist/index.js",
     "cmd:prd": "yarn build && NODE_ENV=production node ./dist/index.js",
     "bundle": "rm -rf packed && NODE_ENV=production yarn build && pkg dist/index.js -c package.json -o packed/ralley --options no-warnings && yarn gzip",
-    "prepublish": "yarn build && yarn bundle",
+    "prepare": "yarn build && yarn bundle",
     "build2": "webpack --context download --config download/webpack.config.js",
     "fix": "yarn eslint \"./src/**/*.{js,jsx}\" --fix"
   },
