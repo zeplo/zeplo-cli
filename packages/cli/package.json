@@ -9,7 +9,7 @@
   "main": "dist/index.js",
   "homepage": "https://github.com/ralleyio/ralley-cli",
   "scripts": {
-    "clean": "rimraf dist",
+    "clean": "rimraf dist/*",
     "test": "jest --testPathPattern=.spec.js",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
     "nyc:coverage": "NODE_ENV=test nyc --reporter=html jest ./src",
@@ -18,11 +18,11 @@
     "test:e2e:staging": "NODE_ENV=production ENV_FILE=.env.test.staging jest e2e --maxWorkers=4",
     "test:e2e:prod": "NODE_ENV=production ENV_FILE=.env.test.prod jest e2e/deploy/image.e2e.js --maxWorkers=20",
     "gzip": "ls packed/ralley* | xargs gzip",
-    "build": "babel src --ignore .spec.js,__mocks__ -d dist --copy-files  --extensions .ts,.js && chmod +x dist/index.js",
+    "build": "yarn clean && babel src --ignore .spec.js,__mocks__ -d dist --copy-files  --extensions .ts,.js && chmod +x dist/index.js",
     "cmd": "yarn build && NODE_ENV=development node ./dist/index.js",
     "cmd:prd": "yarn build && NODE_ENV=production node ./dist/index.js",
     "bundle": "rm -rf packed && NODE_ENV=production yarn build && pkg dist/index.js -c package.json -o packed/ralley --options no-warnings && yarn gzip",
-    "prepublish": "yarn run build && yarn bundle",
+    "prepublish": "yarn build && yarn bundle",
     "build2": "webpack --context download --config download/webpack.config.js",
     "fix": "yarn eslint \"./src/**/*.{js,jsx}\" --fix"
   },
