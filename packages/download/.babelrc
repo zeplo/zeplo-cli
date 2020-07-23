@@ -1,0 +1,9 @@
+
+{
+  "plugins": [
+    "transform-flow-strip-types",
+    "transform-object-rest-spread",
+    "transform-export-extensions",
+  ],
+  "presets": [["latest-node", { "target": "current" }]]
+}

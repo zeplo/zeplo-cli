@@ -1,0 +1,13 @@
+{
+  "name": "root",
+  "private": true,
+  "scripts": {
+    "push": "lerna publish"
+  },
+  "devDependencies": {
+    "lerna": "^3.2.1"
+  },
+  "dependencies": {
+    "ora": "^3.0.0"
+  }
+}

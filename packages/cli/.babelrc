@@ -1,0 +1,45 @@
+{
+  "presets": [
+    "@babel/preset-typescript",
+    "@babel/preset-env", 
+    "@babel/preset-react"
+  ],
+  "plugins": [
+    "@babel/transform-runtime",
+    "@babel/plugin-proposal-class-properties",
+    "@babel/plugin-proposal-object-rest-spread",
+    "@babel/plugin-proposal-optional-chaining",
+    "@babel/plugin-syntax-dynamic-import",
+    "transform-export-extensions",
+    [
+      "module-resolver",
+      {
+        "alias": {
+          "test": "./test",
+          "#": "./src"
+        },
+        "extensions": [
+          ".js",
+          ".jsx",
+          ".es",
+          ".es6",
+          ".mjs",
+          ".ts",
+          ".tsx"
+        ],
+        "stripExtensions": [
+          ".js",
+          ".jsx",
+          ".es",
+          ".es6",
+          ".mjs",
+          ".ts",
+          ".tsx"
+        ]
+      }
+    ]
+  ],
+  "ignore": [
+    "**/*.d.ts"
+  ]
+}
