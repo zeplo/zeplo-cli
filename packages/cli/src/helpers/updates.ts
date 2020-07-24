@@ -5,7 +5,7 @@ import output from './output'
 import { getBasicConfig, setBasicConfig } from './config'
 import pkg from '../../package.json'
 
-const CLI_RELEASES_URL = 'https://ralley-cli-releases.ralley.io/'
+const CLI_RELEASES_URL = 'https://ralley-cli-releases.ralley.io'
 const CHECK_EVERY_HOUR = 60 * 60 * 1000
 
 export default async function updateCheck (args: any) {

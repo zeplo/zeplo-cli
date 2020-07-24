@@ -12,6 +12,7 @@ export interface GlobalArgs {
   quiet?: boolean
   q?: boolean
   json?: boolean
+  debug?: boolean
   ignoreUpdates?: boolean
 }
 

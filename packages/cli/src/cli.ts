@@ -9,6 +9,7 @@ import logout from './cmds/logout'
 import queue from './cmds/queue'
 import logs from './cmds/requests'
 import config from './cmds/config'
+import dev from './cmds/dev'
 import output from './helpers/output'
 import updateCheck from './helpers/updates'
 
@@ -28,6 +29,7 @@ const cli = yargs
   .command(login)
   .command(logout)
   .command(signup)
+  .command(dev)
   .option('token', {
     alias: 't',
     describe: 'Authentication token',
@@ -39,6 +41,9 @@ const cli = yargs
   .option('quiet', {
     alias: 'q',
     describe: 'Quiet mode (no stdout)',
+  })
+  .option('debug', {
+    describe: 'Debug mode (more stdout)',
   })
   .option('json', {
     describe: 'Format response as JSON (only valid for list commands)',

@@ -13,6 +13,11 @@ function output (msg: string, args: GlobalArgs) {
   console.log(msg)
 }
 
+output.debug = function outputDebug (msg: string, args: GlobalArgs) {
+  if (!args?.debug) return
+  return output(`${chalk.cyan('[DEBUG]')} ${msg}`, args)
+}
+
 output.block = function outputImage (msg: string, args: GlobalArgs) {
   output(['', msg, ''].join('\n'), args)
 }
@@ -31,7 +36,7 @@ output.success = function outputSuccess (msg: string, args: GlobalArgs) {
 }
 
 output.info = function outputInfo (msg: string, args: GlobalArgs) {
-  output(`${chalk.cyan('[INFO]')} ${msg}'`, args)
+  output(`${chalk.cyan('[INFO]')} ${msg}`, args)
 }
 
 output.accent = function outputAccent (msg: string, args: GlobalArgs) {

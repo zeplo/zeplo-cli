@@ -6,7 +6,7 @@ import writeJsonFile from 'write-json-file'
 import { get, set } from 'lodash'
 import { AuthConfig } from '../types'
 
-const { CONFIG_DIR, CONFIG_SUFFIX = '' } = process.env
+const { CONFIG_DIR = '.ralley', CONFIG_SUFFIX = '' } = process.env
 
 const DEFAULT_AUTH_CONFIG = {
   _: 'This is your Ralley credentials file. DON\'T SHARE!',
