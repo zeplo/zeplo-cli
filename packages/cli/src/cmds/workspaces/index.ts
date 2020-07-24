@@ -3,9 +3,9 @@ import list, { handler } from './list'
 import create from './create'
 
 export default {
-  scriptName: 'ralley workpsaces',
-  command: 'workpsaces',
-  desc: 'Manage workpsaces',
+  scriptName: 'ralley workspaces',
+  command: 'workspaces',
+  desc: 'Manage workspaces',
   builder: (yargs) => {
     return yargs
       .command(list)

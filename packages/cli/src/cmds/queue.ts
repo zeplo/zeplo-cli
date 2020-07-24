@@ -1,8 +1,8 @@
 import { CommandModule } from 'yargs'
-import axios, { AxiosRequestConfig } from 'axios'
+import axios, { AxiosRequestConfig, AxiosError } from 'axios'
 import output from '#/helpers/output'
 
-const { QUEUE_URL } = process.env
+const { QUEUE_URL = 'https://ralley.to' } = process.env
 
 export async function handler (args: any) {
   const req = {
@@ -29,9 +29,16 @@ export async function handler (args: any) {
     req.headers['X-Ralley-Retry'] = args.retry
   }
 
-  const res = await axios(req)
+  if (args.t || args.token) {
+    req.headers['X-Ralley-Token'] = args.t || args.token
+  }
 
-  output(res.data, args)
+  const res = await axios(req).catch((err: AxiosError) => {
+    output(err?.response?.data, args)
+    output.error(err.message, args)
+  })
+
+  if (res) output(res.data, args)
 }
 
 export default {

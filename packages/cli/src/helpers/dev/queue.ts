@@ -1,6 +1,6 @@
 import { v4 } from 'uuid'
 import ms from 'ms'
-import { RequestRequest } from './request'
+import { RequestRequest } from '#/request'
 import { parseRequest, getDelayFromOptions } from './parse'
 import { jobs } from './jobs'
 import output from '../output'

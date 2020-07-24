@@ -52,7 +52,7 @@ export async function addAuthConfig (args: any, username: string, token: string)
 
   auth.credentials = {
     [username]: {
-      type: 'jwt',
+      type: 'token',
       token,
     },
   }

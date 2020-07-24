@@ -1,5 +1,5 @@
 import { map } from 'lodash'
-import { RequestRequest } from './request'
+import { RequestRequest } from '#/request'
 import queue from './queue'
 
 export default function bulk (args: any, request: RequestRequest) {

@@ -1,6 +1,6 @@
 import fs from 'fs-extra'
+import { Request } from '#/request'
 import getConfigPath from '../config'
-import { Request } from './request'
 import { merge } from 'lodash'
 
 export interface RequestJob {

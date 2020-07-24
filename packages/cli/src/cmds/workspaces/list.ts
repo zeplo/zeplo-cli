@@ -1,5 +1,6 @@
 import { CommandModule } from 'yargs'
 import output from '#/helpers/output'
+import request from '#/helpers/request'
 
 const columns = [{
   name: 'ID',
@@ -7,18 +8,19 @@ const columns = [{
 }, {
   name: 'Worksapce',
   key: 'name',
-}, {
-  name: 'Type',
-  key: ({ type }: any) => (type === 'ORGANIZATION' ? 'Organization' : 'User (default)'),
 }]
 
 export async function handler (args: any) {
-  const list: any = [] // await request(args)
+  const list: any = await request(args, {
+    method: 'get',
+    url: 'workspaces',
+  })
+
   output.table(columns, list, args)
 }
 
 export default {
   command: 'list',
-  desc: 'List worksapces',
+  desc: 'List workspaces',
   handler,
 } as CommandModule

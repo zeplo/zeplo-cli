@@ -1,10 +1,10 @@
-import { CommandModule } from 'yargs'
+import { CommandModule } from 'yargs'
 import chalk from 'chalk'
 import prompt from 'prompt'
 import util from 'util'
-import request from '../helpers/request'
-import output from '../helpers/output'
-import { addAuthConfig } from '../helpers/config'
+import request from '#/helpers/request'
+import output from '#/helpers/output'
+import login from '#/helpers/login'
 
 const promptGet = util.promisify(prompt.get)
 
@@ -16,13 +16,6 @@ const schema = {
     email: {
       description: 'E-mail',
     },
-    username: {
-      description: 'Username',
-      // pattern: /^[0-9a-zA-Z@.\-]+$/,
-      // message: 'Username should be your e-mail address',
-      required: true,
-    },
-    // TODO: min length for password
     password: {
       description: 'Password',
       hidden: true,
@@ -35,34 +28,28 @@ async function handler (args: any) {
   prompt.start()
 
   const {
-    email, password, username, name,
+    email, password, name,
   } = await promptGet(schema)
 
-  const signup = await request(args, {
+  // Signup user
+  await request(args, {
     method: 'POST',
     url: '/signup',
     data: {
       name,
-      username,
       email,
       password,
     },
-  })
+  }, false)
 
-  if (signup) {
-    await addAuthConfig(args, email, signup.token)
-  }
+  // Login with user
+  await login(args, email, password)
 
   output(chalk.green('Successful signup! Welcome!'), args)
 }
 
 export default {
   command: 'signup',
-  desc: 'Signup to Ralley',
-  builder: {
-    dir: {
-      default: '.',
-    },
-  },
+  desc: 'Sign up to Ralley',
   handler,
 } as CommandModule

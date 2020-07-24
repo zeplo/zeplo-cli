@@ -3,7 +3,7 @@ import { URL } from 'url'
 import { size, toNumber } from 'lodash'
 import { IncomingMessage } from 'http'
 import queryString from 'query-string'
-import { Request, RequestRequest } from './request'
+import { Request, RequestRequest } from '#/request'
 
 export async function parseMessage (request: IncomingMessage): Promise<RequestRequest> {
   const queryPos = request.url?.indexOf('?') || -1

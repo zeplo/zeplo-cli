@@ -3,11 +3,15 @@ import handleError from './errors'
 import { getAuthConfig } from './config'
 import { AuthArgs } from '../types'
 
-const NO_TOKEN_MSG = `
-  ${chalk.red('No authentication token')}
-
+export const AUTH_MSG = `
   Use ${chalk.cyanBright('$ ralley login')} to login
   Or ${chalk.cyanBright('$ ralley signup')} to create a new account
+`
+
+export const NO_TOKEN_MSG = `
+  ${chalk.red('No authentication token')}
+
+${AUTH_MSG}
 `
 
 export default async function getAuth (args: AuthArgs, requireAuth = true) {
