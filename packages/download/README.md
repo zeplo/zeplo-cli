@@ -36,7 +36,7 @@ Commands:
   ralley login        Login to Ralley
   ralley logout       Logout (and delete user config)
   ralley signup       Sign up to Ralley
-  ralley dev          Manage dev environment
+  ralley dev          Start dev environment
 
 Options:
   --version, -v    Show version number                                 [boolean]
@@ -86,10 +86,3 @@ There are some minor differences to the production server:
     * Unpause request - `http://localhost:4747/requests/<id>/active`
 
 
-
-#### Setup
-
-This repo is split into two packages:
-
- - pacakge/cli - the core client that is used to create the released binaries
- - package/download - used on NPM to install the library (using the released binaries)

@@ -2,7 +2,8 @@
   "name": "@ralley/cli-root",
   "private": true,
   "scripts": {
-    "release": "lerna publish --force-publish"
+    "copy:readme": "cp ./README.md packages/download/README.md",
+    "release": "yarn copy:readme && lerna publish --force-publish"
   },
   "workspaces": [
     "packages/*"
