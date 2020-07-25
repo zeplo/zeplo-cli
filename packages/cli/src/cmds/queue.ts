@@ -1,12 +1,15 @@
 import { CommandModule } from 'yargs'
 import axios, { AxiosRequestConfig, AxiosError } from 'axios'
 import output from '#/helpers/output'
+import { getDevUrl } from '#/helpers/dev/config'
 
 const { QUEUE_URL = 'https://ralley.to' } = process.env
 
 export async function handler (args: any) {
+  const queueUrl = (await getDevUrl(args)) || QUEUE_URL
+
   const req = {
-    baseURL: QUEUE_URL,
+    baseURL: queueUrl,
     url: args.url,
     headers: {},
     data: args.d || args.body,

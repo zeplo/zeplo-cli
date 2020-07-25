@@ -91,7 +91,7 @@ export default function startServer (args: any) {
     output.space(args)
     output('-----------------------------------------------', args)
     output.space(args)
-    output.success('Ralley DEV queue is ready!', args)
+    output.success(`Ralley DEV queue for ${workspace} workspace is ready!`, args)
     output.space(args)
     output.accent(`${chalk.bold('Local:')}            http://localhost:${port}`, args)
     if (internalIpAddr) output.accent(`${chalk.bold('On your network:')}  http://${internalIp.v4.sync()}:${port}`, args)
