@@ -2,12 +2,13 @@
   "name": "@ralley/cli-root",
   "private": true,
   "scripts": {
-    "push": "lerna publish"
+    "release": "lerna publish --force-publish"
   },
-  "devDependencies": {
-    "lerna": "^3.2.1"
-  },
+  "workspaces": [
+    "packages/*"
+  ],
   "dependencies": {
-    "ora": "^3.0.0"
+    "ora": "^3.0.0",
+    "lerna": "^3.2.1"
   }
 }
