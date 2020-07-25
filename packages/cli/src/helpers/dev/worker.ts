@@ -2,7 +2,7 @@ import axios from 'axios'
 import { v4 } from 'uuid'
 import { merge, map } from 'lodash'
 import ms from 'ms'
-import { jobs, saveJobs, loadJobs } from './jobs'
+import { jobs, saveJobs, loadSavedJobs } from './jobs'
 import { Request } from '#/request'
 import { getNextSchedule } from './util'
 import output from '../output'
@@ -11,7 +11,7 @@ import pkg from '../../../package.json'
 let timer: NodeJS.Timeout|null = null
 
 export default function worker (args: any) {
-  loadJobs(args).then(() => {
+  loadSavedJobs(args).then(() => {
     timer = setTimeout(() => { tick(args) }, 1000)
   })
   return async () => {
@@ -25,11 +25,12 @@ export async function tick (args: any) {
   const now = Date.now() / 1000
 
   map(jobs, (job, jobId) => {
-    if (job.delay && job.delay > now) return
+    if ((job.delay && job.delay > now) || job.request.status === 'INACTIVE') return
 
     return process(args, job.request).catch((e) => {
       output.error(e.message, args, false)
     }).then(() => {
+      if (args.retain || args.r) return
       delete jobs[jobId]
     })
   })
@@ -77,7 +78,7 @@ export async function process (args: any, request: Request) {
     })
   } catch (e) {
     // TODO: we should output the error somewhere
-    output.error(`Job error ${request.id}: ${e.message}`, args, false)
+    output.warn(`Job error ${request.id}: ${e.message}`, args)
 
     if (request.retry && request.retry.max < request._source.attempts) {
       const { backoff, time } = request.retry

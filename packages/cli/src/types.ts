@@ -9,8 +9,8 @@ export interface GlobalArgs {
   token?: string
   workspace?: string
   w?: string
-  quiet?: boolean
-  q?: boolean
+  silent?: boolean
+  s?: boolean
   json?: boolean
   debug?: boolean
   ignoreUpdates?: boolean

@@ -3,7 +3,7 @@ import fs from 'fs-extra'
 import path from 'path'
 import loadJsonFile from 'load-json-file'
 import writeJsonFile from 'write-json-file'
-import { get, set } from 'lodash'
+import { get, set, remove } from 'lodash'
 import { AuthConfig } from '../types'
 
 const { CONFIG_DIR = '.ralley', CONFIG_SUFFIX = '' } = process.env
@@ -14,17 +14,20 @@ const DEFAULT_AUTH_CONFIG = {
   defaultAuth: null,
 }
 
-const configSuffix = (args: any) =>
+export const configSuffix = (args: any) =>
   (args.endpoint
     ? `[${args.endpoint.replace(/https?:\/\//, '')}]`
     : CONFIG_SUFFIX)
 
-const getAuthConfigPath = (args: any) => {
+export const getAuthConfigPath = (args: any) => {
   return path.resolve(getConfigPath(args), `./auth${configSuffix(args)}.json`)
 }
 
-const getBasicConfigPath = (args: any) =>
+export const getBasicConfigPath = (args: any) =>
   path.resolve(getConfigPath(args), `./config${configSuffix(args)}.json`)
+
+export const getDevPath = (args: any) =>
+  path.resolve(getConfigPath(args), './dev.json')
 
 export default function getConfigPath (args: any) {
   const { configPath } = args
@@ -80,20 +83,28 @@ export async function removeAuthConfig (args: any) {
 
 export async function setBasicConfig (args: any, key: string, value: any) {
   const configPath = getBasicConfigPath(args)
+  return setConfig(configPath, key, value)
+}
+
+export async function getBasicConfig (args: any, key: string) {
+  const configPath = getBasicConfigPath(args)
+  return getConfig(configPath, key)
+}
+
+export async function setConfig (path: string, key: string, value: any) {
   let json = {}
-  if (fs.existsSync(configPath)) {
-    json = await fs.readJson(configPath)
+  if (fs.existsSync(path)) {
+    json = await fs.readJson(path)
   }
   set(json, key, value)
-  await fs.outputJson(configPath, json, {
+  await fs.outputJson(path, json, {
     spaces: 2,
   })
   return value
 }
 
-export async function getBasicConfig (args: any, key: string) {
-  const configPath = getBasicConfigPath(args)
-  if (!fs.existsSync(configPath)) return null
-  const json = await fs.readJson(configPath)
+export async function getConfig (path: string, key: string) {
+  if (!fs.existsSync(path)) return null
+  const json = await fs.readJson(path)
   return get(json, key)
 }

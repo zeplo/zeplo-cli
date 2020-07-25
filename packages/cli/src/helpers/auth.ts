@@ -10,7 +10,6 @@ export const AUTH_MSG = `
 
 export const NO_TOKEN_MSG = `
   ${chalk.red('No authentication token')}
-
 ${AUTH_MSG}
 `
 

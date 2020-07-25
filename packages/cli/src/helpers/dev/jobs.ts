@@ -8,6 +8,11 @@ export interface RequestJob {
   request: Request
 }
 
+export interface PartialRequestJob {
+  delay?: number
+  request: Partial<Request>
+}
+
 export const jobs: Record<string, RequestJob> = {}
 
 export function getJobsPath (args: any) {
@@ -23,14 +28,18 @@ export async function saveJobs (args: any) {
   return jobs
 }
 
-export async function loadJobs (args: any) {
+export async function getSavedJobs (args: any) {
   const jobsPath = getJobsPath(args)
   if (!fs.existsSync(jobsPath)) return
-  const json = await fs.readJson(jobsPath)
+  return fs.readJson(jobsPath)
+}
+
+export async function loadSavedJobs (args: any) {
+  const json = await getSavedJobs(args)
   merge(jobs, json)
 }
 
-export async function resetJobs (args: any) {
+export async function resetSavedJobs (args: any) {
   await fs.outputJson(getJobsPath(args), {}, {
     spaces: 2,
   })

@@ -5,7 +5,7 @@ import output from '#/helpers/output'
 import request from '#/helpers/request'
 import { Request } from '#/request'
 
-const columns = [{
+export const columns = [{
   name: 'ID',
   key: 'id',
 }, {
@@ -33,7 +33,7 @@ const columns = [{
 export async function handler (args: any) {
   const workspace = args.w || args.workspace
 
-  if (!workspace) {
+  if (!workspace && !args.dev) {
     output.error('Workspace is required, use --workspace', args)
   }
 
@@ -50,6 +50,6 @@ export async function handler (args: any) {
 
 export default {
   command: 'requests',
-  desc: 'Log of requests',
+  desc: 'Queued requests',
   handler,
 } as CommandModule

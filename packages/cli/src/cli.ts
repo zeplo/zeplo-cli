@@ -38,9 +38,16 @@ const cli = yargs
     alias: 'w',
     describe: 'Workspace to target',
   })
-  .option('quiet', {
-    alias: 'q',
-    describe: 'Quiet mode (no stdout)',
+  .option('endpoint', {
+    alias: 'e',
+    describe: 'Queue server endpoint',
+  })
+  .option('dev', {
+    describe: 'Send requests to dev server',
+  })
+  .option('silent', {
+    alias: 's',
+    describe: 'Silent mode (no stdout)',
   })
   .option('debug', {
     describe: 'Debug mode (more stdout)',

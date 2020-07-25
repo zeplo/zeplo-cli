@@ -9,7 +9,8 @@ export default function queue (args: any, request: RequestRequest) {
   const id = `${v4()}-iow`
 
   // TODO: should we get args from prop OR from a token?
-  const req = parseRequest(id, args.workspace, {
+  const workspace = args.w || args.workspace || args.dev || 'default'
+  const req = parseRequest(id, workspace, {
     ...request,
     // Remove the leading slash
     url: request.url.substring(1),

@@ -9,7 +9,7 @@ const pad = (padding: number) => (new Array(padding)).fill(' ').join('')
 const padLeft = (str: string, padding: number) => `${pad(padding)}${str}`
 
 function output (msg: string, args: GlobalArgs) {
-  if (args?.q || args?.quiet) return
+  if (args?.s || args?.silent) return
   console.log(msg)
 }
 
