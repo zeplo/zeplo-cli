@@ -1,6 +1,6 @@
 {
   "name": "@ralley/cli-builder",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "CLI for Ralley",
   "repository": "https://github.com/ralleyio/ralley-cli",
   "author": "Calum Moore",
