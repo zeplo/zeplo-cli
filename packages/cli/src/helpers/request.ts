@@ -8,12 +8,14 @@ const { API_URL } = process.env
 export default async function requestWithAuth (args: any, config: AxiosRequestConfig, requireAuth = true, captureError = true) {
   const token = await getAuth(args, requireAuth && !args.dev)
 
-  const edev = getDevUrl(args)
+  const edev = await getDevUrl(args)
   const endpoint = args.endpoint || args.e || edev || API_URL
   const headers: Record<string, string> = {}
   if (token) {
     headers['X-Ralley-Token'] = token
   }
+
+  console.log(endpoint)
 
   const reqObj = {
     ...config,
