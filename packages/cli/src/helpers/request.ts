@@ -10,7 +10,7 @@ export default async function requestWithAuth (args: any, config: AxiosRequestCo
 
   const edev = await getDevUrl(args)
   const endpoint = args.endpoint || args.e || edev || API_URL
-  const headers: Record<string, string> = {}
+  const headers: Record<string, string> = config.headers || {}
   if (token) {
     headers['X-Ralley-Token'] = token
   }
