@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "copy:readme": "cp ./README.md packages/download/README.md",
+    "prepare": "cd packages/cli && yarn bundle",
     "release": "yarn copy:readme && lerna publish --force-publish"
   },
   "workspaces": [

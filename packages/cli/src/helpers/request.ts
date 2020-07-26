@@ -15,14 +15,10 @@ export default async function requestWithAuth (args: any, config: AxiosRequestCo
     headers['X-Ralley-Token'] = token
   }
 
-  console.log(endpoint)
-
   const reqObj = {
     ...config,
     baseURL: endpoint,
-    headers: {
-      'X-Ralley-Token': token,
-    },
+    headers,
   } as AxiosRequestConfig
 
   const resp = await axios(reqObj).catch((err: AxiosError) => {
