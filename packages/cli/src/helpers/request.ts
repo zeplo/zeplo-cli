@@ -16,6 +16,7 @@ export default async function requestWithAuth (args: any, config: AxiosRequestCo
   }
 
   const reqObj = {
+    responseType: 'json',
     ...config,
     baseURL: endpoint,
     headers,

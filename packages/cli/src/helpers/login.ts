@@ -1,5 +1,5 @@
 import firebase from '#/config/firebase'
-import axios from 'axios'
+import request from './request'
 import { addAuthConfig } from '../helpers/config'
 import output from './output'
 
@@ -10,19 +10,20 @@ export default async function login (args: any, email: string, password: string)
   const token = await firebase?.auth().currentUser?.getIdToken()
 
   // Exchange Firebase token for a user token
-  const res = await axios({
+  const res = await request(args, {
     baseURL: API_URL,
     url: '/users/me/token',
     method: 'GET',
+    responseType: 'json',
     headers: {
       Authorization: `Bearer ${token}`,
     },
-  }).catch((e) => {
+  }, false, false).catch((e) => {
     output.error(e.message, args)
-    return null
+    process.exit(1)
   })
 
-  await addAuthConfig(args, email, res?.data.token)
+  await addAuthConfig(args, email, res?.data?.token)
 
   return token
 }
