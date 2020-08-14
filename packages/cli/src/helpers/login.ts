@@ -10,7 +10,7 @@ export default async function login (args: any, email: string, password: string)
   const token = await firebase?.auth().currentUser?.getIdToken()
 
   // Exchange Firebase token for a user token
-  const res = await request(args, {
+  const data = await request(args, {
     baseURL: API_URL,
     url: '/users/me/token',
     method: 'GET',
@@ -23,7 +23,7 @@ export default async function login (args: any, email: string, password: string)
     process.exit(1)
   })
 
-  await addAuthConfig(args, email, res?.data?.token)
+  await addAuthConfig(args, email, data.token)
 
   return token
 }
