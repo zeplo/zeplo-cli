@@ -13,7 +13,7 @@ export default function queue (args: any, request: RequestRequest) {
   const req = parseRequest(id, workspace, {
     ...request,
     // Remove the leading slash
-    url: request.url.substring(1),
+    url: request.url.startsWith('/') ? request.url.substring(1) : request.url,
   })
 
   const delay = getDelayFromOptions(req, req.received)
@@ -27,8 +27,4 @@ export default function queue (args: any, request: RequestRequest) {
   output.info(`Received request ${id} ${delaystr}`, args)
 
   return { id }
-}
-
-export function load () {
-
 }

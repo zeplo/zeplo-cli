@@ -8,7 +8,6 @@ import { Request, RequestRequest } from '#/request'
 export async function parseMessage (request: IncomingMessage): Promise<RequestRequest> {
   const queryPos = request.url?.indexOf('?') || -1
   const path = queryPos > -1 ? request?.url?.substring(0, queryPos) || '/' : request.url || '/'
-  // TODO: how does router handle this?
   const query = queryPos > -1 ? queryString.parseUrl(request?.url?.substring(queryPos) || '') : null
 
   return {
@@ -42,13 +41,13 @@ export function parseRequest (id: string, workspace: string, request: RequestReq
   }
 
   const parsedUrl = new URL(fullUrl)
-  const options = getRawOptionsFromHeaderAndParams(request.headers, request.params)
+  const options = getRawOptionsFromHeaderAndParams(request.headers || {}, request.params || {})
   const format = formatRawOptions(options)
   const received = Date.now() / 1000
   const delay = getDelayFromOptions(options, received)
 
-  const headers = cleanHeaders(request.headers)
-  const params = cleanParams(request.params, request.headers)
+  const headers = cleanHeaders(request.headers || {})
+  const params = cleanParams(request.params || {}, request.headers || {})
 
   return {
     id,
@@ -71,7 +70,7 @@ export function parseRequest (id: string, workspace: string, request: RequestReq
   } as Request
 }
 
-export function getRawOptionsFromHeaderAndParams (headers: any, params: any) {
+export function getRawOptionsFromHeaderAndParams (headers?: any, params?: any) {
   let p = params
   if (headers['x-ralley-no-conflict']) {
     p = {}

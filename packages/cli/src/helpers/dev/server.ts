@@ -73,11 +73,11 @@ export default function startServer (args: any) {
     } catch (e) {
       if (!e.statusCode) {
         response.statusCode = 500
-        send({ error: { message: 'Internal server error' } })
+        return send({ error: { message: 'Internal server error', __dev_error: e.message } })
       }
 
       response.statusCode = e.statusCode
-      send({ error: { message: e.message, reason: e.reason, code: e.code } })
+      return send({ error: { message: e.message, reason: e.reason, code: e.code } })
     }
 
     response.statusCode = 404
