@@ -76,6 +76,8 @@ export async function process (args: any, request: Request) {
       maxContentLength: 15 * 1000000,
       responseType: 'arraybuffer',
     })
+
+    output.info(`Job success ${request.id}`, args)
   } catch (e) {
     // TODO: we should output the error somewhere
     output.warn(`Job error ${request.id}: ${e.message}`, args)
@@ -95,8 +97,6 @@ export async function process (args: any, request: Request) {
       return null
     }
   }
-
-  output.info(`Job success ${request.id}`, args)
 }
 
 export function scheduleNextJob (request: Request, source: 'RETRY'|'SCHEDULE', delaytime: number) {

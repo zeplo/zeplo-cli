@@ -39,6 +39,11 @@ export default function startServer (args: any) {
       return
     }
 
+    if (req.path === '/favicon.ico') {
+      response.statusCode = 204
+      return response.end()
+    }
+
     const isQueuePath = req.path && (
       HTTP_REGEX.test(req.path) ||
       PATH_REGEX.test(req.path) ||

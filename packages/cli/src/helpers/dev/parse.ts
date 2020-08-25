@@ -48,6 +48,7 @@ export function parseRequest (id: string, workspace: string, request: RequestReq
 
   const headers = cleanHeaders(request.headers || {})
   const params = cleanParams(request.params || {}, request.headers || {})
+  const modUrl = queryString.parseUrl(parsedUrl.toString(), { parseFragmentIdentifier: true })
 
   return {
     id,
@@ -58,7 +59,11 @@ export function parseRequest (id: string, workspace: string, request: RequestReq
       ...request,
       headers,
       params,
-      url: parsedUrl.toString(),
+      url: queryString.stringifyUrl({
+        url: modUrl.url,
+        query: params,
+        fragmentIdentifier: modUrl.fragmentIdentifier,
+      }),
       host: parsedUrl.host,
       scheme: parsedUrl.protocol,
       hasbody: !!request.body,
