@@ -68,7 +68,7 @@ export async function process (args: any, request: Request) {
         'X-Ralley-Start': now,
         'X-Ralley-Id': request.id,
       },
-      params,
+      // params,
       data: body ? Buffer.from(body, 'base64') : undefined,
       // Timeout after 24 hours
       timeout: 24 * 60 * 60 * 1000,
