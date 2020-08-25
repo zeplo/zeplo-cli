@@ -4,7 +4,7 @@ import createError from './errors'
 
 export async function getRequestById (requestId: string) {
   const job = await jobs[requestId]
-  return formatJob(merge({}, job))
+  return formatJob(job)
 }
 
 export async function listRequests () {
@@ -43,9 +43,9 @@ export async function playRequest (requestId: string) {
 }
 
 export function formatJob (job: RequestJob) {
-  if (!job) return null
+  if (!job || !job.request) return null
   const r = merge({}, job.request)
-  delete r.request.body
-  delete r._source
+  if (r?.request?.body) delete r.request.body
+  if (r?._source) delete r._source
   return r
 }

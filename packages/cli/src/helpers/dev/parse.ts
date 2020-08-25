@@ -1,6 +1,6 @@
 import { Method } from 'axios'
 import { URL } from 'url'
-import { size, toNumber } from 'lodash'
+import { size, toNumber, isObject, merge, isPlainObject, isArray } from 'lodash'
 import { IncomingMessage } from 'http'
 import queryString from 'query-string'
 import { Request, RequestRequest } from '#/request'
@@ -37,7 +37,7 @@ export async function getBody (request: IncomingMessage): Promise<string> {
 export function parseRequest (id: string, workspace: string, request: RequestRequest) {
   let fullUrl = request.url
   if (!fullUrl.startsWith('http')) {
-    fullUrl = `${request.scheme}://${fullUrl}`
+    fullUrl = `https://${fullUrl}`
   }
 
   const parsedUrl = new URL(fullUrl)
@@ -47,8 +47,14 @@ export function parseRequest (id: string, workspace: string, request: RequestReq
   const delay = getDelayFromOptions(options, received)
 
   const headers = cleanHeaders(request.headers || {})
-  const params = cleanParams(request.params || {}, request.headers || {})
-  const modUrl = queryString.parseUrl(parsedUrl.toString(), { parseFragmentIdentifier: true })
+  const params = cleanParams(merge({}, request.params, queryString.parseUrl(fullUrl).query), request.headers || {})
+  const modUrl = queryString.parseUrl(fullUrl, { parseFragmentIdentifier: true })
+  const method = request.method || 'POST'
+
+  if (request.body) {
+    if (isPlainObject(request.body) || isArray(request.body)) headers['content-type'] = 'application/json'
+    else headers['content-type'] = 'text/plain'
+  }
 
   return {
     id,
@@ -57,6 +63,7 @@ export function parseRequest (id: string, workspace: string, request: RequestReq
     source: 'REQUEST',
     request: {
       ...request,
+      method,
       headers,
       params,
       url: queryString.stringifyUrl({
@@ -65,7 +72,8 @@ export function parseRequest (id: string, workspace: string, request: RequestReq
         fragmentIdentifier: modUrl.fragmentIdentifier,
       }),
       host: parsedUrl.host,
-      scheme: parsedUrl.protocol,
+      scheme: parsedUrl.protocol.replace(':', ''),
+      path: parsedUrl.pathname,
       hasbody: !!request.body,
     },
     start: delay > 0 ? delay : received,
@@ -114,7 +122,7 @@ export function formatRawOptions (options: any) {
     const [max = 1, backoff = 'FIXED', time = 1] = (options.retry || '').split('|')
     options.retry = {
       max,
-      backoff,
+      backoff: backoff ? backoff.toUpperCase() : 'FIXED',
       time,
     }
   }

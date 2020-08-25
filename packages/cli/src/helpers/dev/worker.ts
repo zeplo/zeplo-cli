@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { v4 } from 'uuid'
-import { merge, map } from 'lodash'
+import { merge, map, isObject } from 'lodash'
 import ms from 'ms'
 import { jobs, saveJobs, loadSavedJobs } from './jobs'
 import { Request } from '#/request'
@@ -71,7 +71,7 @@ export async function process (args: any, request: Request) {
         'X-Ralley-Id': request.id,
       },
       // params,
-      data: body ? Buffer.from(body, 'base64') : undefined,
+      data: body ? Buffer.from(isObject(body) ? JSON.stringify(body) : `${body}`, 'base64') : undefined,
       // Timeout after 24 hours
       timeout: 24 * 60 * 60 * 1000,
       // 15mb limit
@@ -86,13 +86,13 @@ export async function process (args: any, request: Request) {
     output.warn(`Job error ${request.id}: ${e.message}`, args)
     request.status = 'ERROR'
 
-    if (request.retry && request.retry.max < request._source.attempts) {
+    if (request.retry && request.retry.max < (request._source?.attempts || 0)) {
       const { backoff, time } = request.retry
       let next = 0
       if (backoff === 'FIXED') {
         next = time || 1
       } else if (backoff === 'EXPONENTIAL') {
-        next = ((request._source.attempts) ** (time || 1))
+        next = ((request._source?.attempts || 0) ** (time || 1))
       }
 
       const nextId = scheduleNextJob(request, 'RETRY', next + now)
