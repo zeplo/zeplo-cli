@@ -25,7 +25,8 @@ export async function tick (args: any) {
   const now = Date.now() / 1000
 
   map(jobs, (job, jobId) => {
-    if ((job.delay && job.delay > now) || job.request.status === 'INACTIVE') return
+    if (job.delay && job.delay > now) return
+    if (job.request.status !== 'PENDING') return
 
     return process(args, job.request).catch((e) => {
       output.error(e.message, args, false)
@@ -41,9 +42,10 @@ export async function tick (args: any) {
 
 export async function process (args: any, request: Request) {
   output.info(`Processing request ${request.id} ${request.trace ? `for ${request.trace}` : ''}`, args)
+  request.status = 'ACTIVE'
 
   const { id, start, trace, source, _source } = request
-  const { url, method, headers, params, body } = request.request
+  const { url, method, headers, body } = request.request
   const { cron, interval } = _source || request
   const now = Date.now() / 1000
 
@@ -76,11 +78,13 @@ export async function process (args: any, request: Request) {
       maxContentLength: 15 * 1000000,
       responseType: 'arraybuffer',
     })
+    request.status = 'SUCCESS'
 
     output.info(`Job success ${request.id}`, args)
   } catch (e) {
     // TODO: we should output the error somewhere
     output.warn(`Job error ${request.id}: ${e.message}`, args)
+    request.status = 'ERROR'
 
     if (request.retry && request.retry.max < request._source.attempts) {
       const { backoff, time } = request.retry
