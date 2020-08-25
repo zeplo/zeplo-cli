@@ -52,7 +52,7 @@ export function parseRequest (id: string, workspace: string, request: RequestReq
 
   return {
     id,
-    status: delay > 0 ? 'PENDING' : 'ACTIVE',
+    status: 'PENDING',
     workspace,
     source: 'REQUEST',
     request: {
