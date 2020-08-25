@@ -51,7 +51,7 @@ export function parseRequest (id: string, workspace: string, request: RequestReq
   const modUrl = queryString.parseUrl(fullUrl, { parseFragmentIdentifier: true })
   const method = request.method || 'POST'
 
-  if (request.body) {
+  if (request.body && !headers['content-type']) {
     if (isPlainObject(request.body) || isArray(request.body)) headers['content-type'] = 'application/json'
     else headers['content-type'] = 'text/plain'
   }
