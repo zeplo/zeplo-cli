@@ -41,19 +41,31 @@ export function parseRequest (id: string, workspace: string, request: RequestReq
   }
 
   const parsedUrl = new URL(fullUrl)
-  const options = getRawOptionsFromHeaderAndParams(request.headers || {}, request.params || {})
+  const mergedParams = merge({}, queryString.parseUrl(fullUrl).query, request.params)
+  const options = getRawOptionsFromHeaderAndParams(request.headers || {}, mergedParams)
   const format = formatRawOptions(options)
   const received = Date.now() / 1000
   const delay = getDelayFromOptions(options, received)
 
-  const headers = cleanHeaders(request.headers || {})
-  const params = cleanParams(merge({}, request.params, queryString.parseUrl(fullUrl).query), request.headers || {})
+  let headers = cleanHeaders(request.headers || {})
+  const params = cleanParams(mergedParams, request.headers || {})
   const modUrl = queryString.parseUrl(fullUrl, { parseFragmentIdentifier: true })
   const method = request.method || 'POST'
 
-  if (request.body && !headers['content-type']) {
-    if (isPlainObject(request.body) || isArray(request.body)) headers['content-type'] = 'application/json'
-    else headers['content-type'] = 'text/plain'
+  // Normalize request body
+  if (request.body) {
+    if (!headers) headers = {}
+    if (!headers['content-type']) {
+      if (isPlainObject(request.body) || isArray(request.body)) headers['content-type'] = 'application/json'
+      else headers['content-type'] = 'text/plain'
+    }
+
+    if (isPlainObject(request.body) || isArray(request.body)) {
+      request.body = JSON.stringify(request.body)
+    }
+
+    request.body = Buffer.from(request.body).toString('base64')
+    request.hasbody = true
   }
 
   return {
@@ -74,7 +86,6 @@ export function parseRequest (id: string, workspace: string, request: RequestReq
       host: parsedUrl.host,
       scheme: parsedUrl.protocol.replace(':', ''),
       path: parsedUrl.pathname,
-      hasbody: !!request.body,
     },
     start: delay > 0 ? delay : received,
     received: received,

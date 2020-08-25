@@ -9,7 +9,7 @@ import queue from './queue'
 import { parseMessage } from './parse'
 import worker from './worker'
 import {
-  listRequests, getRequestById, pauseRequest, playRequest,
+  listRequests, getRequestById, pauseRequest, playRequest, getRequestBody, getResponseBody,
 } from './requests'
 import { getDevPath, setConfig } from '../config'
 
@@ -74,8 +74,15 @@ export default function startServer (args: any) {
         if (size(parts) === 3 && parts[1] && parts[2] === 'active' && ['PATCH', 'POST', 'PUT'].indexOf(req.method) > -1) {
           return send(playRequest(parts[1]))
         }
+        if (size(parts) === 3 && parts[1] && parts[2] === 'request.body' && req.method === 'GET') {
+          return getRequestBody(parts[1], response)
+        }
+        if (size(parts) === 3 && parts[1] && parts[2] === 'response.body' && req.method === 'GET') {
+          return getResponseBody(parts[1], response)
+        }
       }
     } catch (e) {
+      console.log(e)
       if (!e.statusCode) {
         response.statusCode = 500
         return send({ error: { message: 'Internal server error', __dev_error: e.message } })

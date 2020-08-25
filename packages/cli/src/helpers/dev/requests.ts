@@ -1,4 +1,6 @@
+import { ServerResponse } from 'http'
 import { merge, map, orderBy } from 'lodash'
+import { RequestResponse, RequestRequest } from '#/request'
 import { jobs, RequestJob } from './jobs'
 import createError from './errors'
 
@@ -42,10 +44,30 @@ export async function playRequest (requestId: string) {
   return formatJob(job)
 }
 
+export async function getRequestBody (requestId: string, response: ServerResponse) {
+  const job = jobs[requestId]
+  if (!job?.request?.request) return null
+  return formatBody(job?.request?.request, response)
+}
+
+export async function getResponseBody (requestId: string, response: ServerResponse) {
+  const job = jobs[requestId]
+  if (!job?.request?.response) return null
+  return formatBody(job?.request?.response, response)
+}
+
+export function formatBody (req: RequestResponse|RequestRequest, response: ServerResponse) {
+  if (!req.body) return null
+  const buffer = Buffer.from(req?.body, 'base64')
+  if (req.headers?.['content-type']) response.setHeader('content-type', req.headers['content-type'])
+  response.end(buffer)
+}
+
 export function formatJob (job: RequestJob) {
   if (!job || !job.request) return null
   const r = merge({}, job.request)
   if (r?.request?.body) delete r.request.body
+  if (r?.response?.body) delete r.response.body
   if (r?._source) delete r._source
   return r
 }

@@ -60,8 +60,9 @@ export async function process (args: any, request: Request) {
     if (source === 'REQUEST') return
   }
 
+  let response
   try {
-    await axios({
+    response = await axios({
       url,
       method,
       headers: {
@@ -71,13 +72,14 @@ export async function process (args: any, request: Request) {
         'X-Ralley-Id': request.id,
       },
       // params,
-      data: body ? Buffer.from(isObject(body) ? JSON.stringify(body) : `${body}`, 'base64') : undefined,
+      data: body ? Buffer.from(body, 'base64') : undefined,
       // Timeout after 24 hours
       timeout: 24 * 60 * 60 * 1000,
       // 15mb limit
       maxContentLength: 15 * 1000000,
       responseType: 'arraybuffer',
     })
+
     request.status = 'SUCCESS'
 
     output.info(`Job success ${request.id}`, args)
@@ -97,10 +99,21 @@ export async function process (args: any, request: Request) {
 
       const nextId = scheduleNextJob(request, 'RETRY', next + now)
       output.info(`Retrying failed job ${request.id} in ${ms(next * 1000)} as ${nextId}`, args)
-
-      return null
     }
+
+    response = e.response
   }
+
+  const responseBody = response?.data ? response.data.toString('base64') : undefined
+  request.response = {
+    status: response?.status,
+    statusText: response?.statusText,
+    headers: response?.headers,
+    body: responseBody,
+    hasbody: !!responseBody,
+  }
+
+  return response
 }
 
 export function scheduleNextJob (request: Request, source: 'RETRY'|'SCHEDULE', delaytime: number) {
