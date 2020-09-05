@@ -1,6 +1,6 @@
 {
   "name": "@ralley/cli",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "description": "CLI for Ralley",
   "preferGlobal": true,
   "repository": "https://github.com/ralleyio/ralley-cli",
