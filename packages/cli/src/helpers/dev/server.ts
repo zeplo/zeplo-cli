@@ -52,27 +52,27 @@ export default function startServer (args: any) {
 
     try {
       if (isQueuePath) {
-        return send(queue(args, req))
+        return send(await queue(args, req))
       }
 
       if (req.path === '/bulk') {
-        return send(bulk(args, req))
+        return send(await bulk(args, req))
       }
 
       if (req.path === '/requests') {
-        return send(listRequests())
+        return send(await listRequests())
       }
 
       if (req.path.startsWith('/requests/')) {
         const parts = req.path.substring(1).split('/')
         if (size(parts) === 2 && parts[1] && req.method === 'GET') {
-          return send(getRequestById(parts[1]))
+          return send(await getRequestById(parts[1]))
         }
         if (size(parts) === 3 && parts[1] && parts[2] === 'inactive' && ['PATCH', 'POST', 'PUT'].indexOf(req.method) > -1) {
-          return send(pauseRequest(parts[1]))
+          return send(await pauseRequest(parts[1]))
         }
         if (size(parts) === 3 && parts[1] && parts[2] === 'active' && ['PATCH', 'POST', 'PUT'].indexOf(req.method) > -1) {
-          return send(playRequest(parts[1]))
+          return send(await playRequest(parts[1]))
         }
         if (size(parts) === 3 && parts[1] && parts[2] === 'request.body' && req.method === 'GET') {
           return getRequestBody(parts[1], response)
@@ -82,7 +82,6 @@ export default function startServer (args: any) {
         }
       }
     } catch (e) {
-      console.log(e)
       if (!e.statusCode) {
         response.statusCode = 500
         return send({ error: { message: 'Internal server error', __dev_error: e.message } })
@@ -98,6 +97,8 @@ export default function startServer (args: any) {
 
   const stopWorker = worker(args)
   const internalIpAddr = internalIp.v4.sync()
+
+  // server.setTimeout(15 * 60 * 60 * 1000)
 
   server.listen(port, () => {
     output.space(args)
