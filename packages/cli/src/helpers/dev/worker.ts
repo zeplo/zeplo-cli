@@ -32,7 +32,8 @@ export async function tick (args: any) {
     // Delete expired successful jobs
     if ((job.request.status === 'ERROR' ||
          job.request.status === 'SUCCESS') &&
-        (job.request.end + retainFor) < Date.now()
+         job.request.end &&
+        (job.request.end + retainFor) < now
     ) {
       delete jobs[jobId]
     }
@@ -42,9 +43,9 @@ export async function tick (args: any) {
     return process(args, job.request).catch((e) => {
       output.error(e.message, args, false)
     }).then(() => {
-      if (args.retain === '0' || args.r === '0' || ms(retain) === 0) {
-        delete jobs[jobId]
-      }
+      // if (args.retain === '0' || args.r === '0' || ms(retain) === 0) {
+      //   delete jobs[jobId]
+      // }
     })
   })
 

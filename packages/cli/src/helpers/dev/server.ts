@@ -1,11 +1,12 @@
 import http, { IncomingMessage, ServerResponse } from 'http'
 import chalk from 'chalk'
 import internalIp from 'internal-ip'
-import { size } from 'lodash'
+import { size, isString } from 'lodash'
 import output from '../output'
 import pkg from '../../../package.json'
 import bulk from './bulk'
 import queue from './queue'
+import { resetSavedJobs } from './jobs'
 import { parseMessage } from './parse'
 import worker from './worker'
 import {
@@ -66,7 +67,14 @@ export default function startServer (args: any) {
       }
 
       if (req.path === '/requests') {
-        return send(await listRequests())
+        const filterParam = isString(req.params?.filters) ? req.params?.filters : null
+        const filters = filterParam && JSON.parse(filterParam)
+        return send(await listRequests(filters))
+      }
+
+      if (req.path === '/requests/reset') {
+        await resetSavedJobs(args)
+        return send({ status: 'DONE' })
       }
 
       if (req.path.startsWith('/requests/')) {

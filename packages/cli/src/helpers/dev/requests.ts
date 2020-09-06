@@ -1,16 +1,24 @@
 import { ServerResponse } from 'http'
-import { merge, map, orderBy } from 'lodash'
+import { merge, map, orderBy, every, filter, toString, get } from 'lodash'
 import { RequestResponse, RequestRequest } from '#/request'
 import { jobs, RequestJob } from './jobs'
 import createError from './errors'
 
 export async function getRequestById (requestId: string) {
   const job = await jobs[requestId]
+
+  if (!job) throw createError('not-found')
+
   return formatJob(job)
 }
 
-export async function listRequests () {
-  return orderBy(map(jobs, formatJob), ['start'], ['desc'])
+export async function listRequests (filters: null|Record<string, string>) {
+  let list = map(jobs, formatJob)
+  if (filters) {
+    list = filter(list, (req: any) => !!req &&
+      (every(filters, (val, key) => get(req, key) && toString(get(req, key)) === toString(val))))
+  }
+  return orderBy(list, ['start'], ['desc'])
     .slice(0, 30)
 }
 

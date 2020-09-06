@@ -1,7 +1,7 @@
 import fs from 'fs-extra'
 import { Request } from '#/request'
 import getConfigPath from '../config'
-import { merge } from 'lodash'
+import { merge, forEach } from 'lodash'
 
 export interface RequestJob {
   delay: number
@@ -16,7 +16,7 @@ export interface PartialRequestJob {
 export const jobs: Record<string, RequestJob> = {}
 
 export function getJobsPath (args: any) {
-  const workspace = args.w || args.workspace || 'default'
+  const [workspace] = (args.workspace || 'default').split(':')
   const path = `${getConfigPath(args)}/jobs.${workspace}.json`
   return path
 }
@@ -40,8 +40,8 @@ export async function loadSavedJobs (args: any) {
 }
 
 export async function resetSavedJobs (args: any) {
-  await fs.outputJson(getJobsPath(args), {}, {
-    spaces: 2,
+  forEach(jobs, (_, jobId) => {
+    delete jobs[jobId]
   })
   return jobs
 }
