@@ -15,7 +15,8 @@ export default {
         describe: 'Port to serve queue',
       })
       .option('retain', {
-        describe: 'Retain successful request jobs',
+        describe: 'Retain request log (0 = no retain)',
+        default: '7d',
       })
       // .option('memory', {
       //   describe: 'Jobs will be stored in memory only',

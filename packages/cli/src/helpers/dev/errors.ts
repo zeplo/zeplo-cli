@@ -17,6 +17,7 @@ export const ERROR_CODES = {
 export const ERROR_REASONS = {
   'not-found': { code: 'not-found', message: 'Not found' },
   'server-error': { code: 'internal', message: 'An internal error occured' },
+  'permission-denied': { code: 'permission-denied', message: 'Permission denied' },
   'required-fields': { code: 'invalid-argument', message: 'Required field is missing' },
   'requests/invalid-state': { code: 'failed-precondition', message: 'Request state is invalid' },
 }

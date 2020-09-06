@@ -12,6 +12,7 @@ import {
   listRequests, getRequestById, pauseRequest, playRequest, getRequestBody, getResponseBody,
 } from './requests'
 import { getDevPath, setConfig } from '../config'
+import createError from './errors'
 
 const HTTP_REGEX = /^\/https?:\/\/[^#.\/]*[.]/
 const PATH_REGEX = /^\/[^#.\/]*[.]/
@@ -51,6 +52,11 @@ export default function startServer (args: any) {
     )
 
     try {
+      const [_, token] = (args.workspace || 'default').split(':')
+      if (token && req.params?._token !== token) {
+        throw createError('permission-denied')
+      }
+
       if (isQueuePath) {
         return send(await queue(args, req))
       }

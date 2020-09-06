@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { v4 } from 'uuid'
-import { merge, map, isObject } from 'lodash'
+import { merge, map } from 'lodash'
 import ms from 'ms'
 import { jobs, saveJobs, loadSavedJobs } from './jobs'
 import { Request } from '#/request'
@@ -23,16 +23,28 @@ export default function worker (args: any) {
 
 export async function tick (args: any) {
   const now = Date.now() / 1000
+  const retain: string = args.retain || args.r || '7d'
+  const retainFor = ms(retain) / 1000
 
   map(jobs, (job, jobId) => {
     if (job.delay && job.delay > now) return
+
+    // Delete expired successful jobs
+    if ((job.request.status === 'ERROR' ||
+         job.request.status === 'SUCCESS') &&
+        (job.request.end + retainFor) < Date.now()
+    ) {
+      delete jobs[jobId]
+    }
+
     if (job.request.status !== 'PENDING') return
 
     return process(args, job.request).catch((e) => {
       output.error(e.message, args, false)
     }).then(() => {
-      if (args.retain || args.r) return
-      delete jobs[jobId]
+      if (args.retain === '0' || args.r === '0' || ms(retain) === 0) {
+        delete jobs[jobId]
+      }
     })
   })
 
@@ -112,6 +124,9 @@ export async function process (args: any, request: Request) {
     body: responseBody,
     hasbody: !!responseBody,
   }
+  const end = Date.now() / 1000
+  request.end = end
+  request.duration = Math.round((end - start) * 1000) / 1000
 
   return response
 }
