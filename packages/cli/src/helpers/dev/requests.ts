@@ -1,5 +1,5 @@
 import { ServerResponse } from 'http'
-import { merge, map, orderBy, every, filter, toString, get } from 'lodash'
+import { merge, map, orderBy, every, filter, toString, get, forEach } from 'lodash'
 import { RequestResponse, RequestRequest } from '#/request'
 import { jobs, RequestJob } from './jobs'
 import createError from './errors'
@@ -35,6 +35,13 @@ export async function pauseRequest (requestId: string) {
   if (!validState) throw createError('requests/invalid-state')
 
   job.request.status = 'INACTIVE'
+  delete job.cursor
+
+  const requests = await listRequests({ trace: requestId, status: 'PENDING' })
+  forEach(requests, (request) => {
+    if (!request?.id) return
+    jobs[request.id].request.status = 'INACTIVE'
+  })
 
   return formatJob(job)
 }
@@ -46,7 +53,7 @@ export async function playRequest (requestId: string) {
   if (!job) throw createError('not-found')
   if (job.request.status !== 'INACTIVE') throw createError('requests/invalid-state')
 
-  job.request.status = 'INACTIVE'
+  job.request.status = 'PENDING'
   job.request.start = Date.now() / 1000
 
   return formatJob(job)
@@ -74,8 +81,8 @@ export function formatBody (req: RequestResponse|RequestRequest, response: Serve
 export function formatJob (job: RequestJob) {
   if (!job || !job.request) return null
   const r = merge({}, job.request)
-  if (r?.request?.body) delete r.request.body
-  if (r?.response?.body) delete r.response.body
+  if (r?.request?.body !== undefined) delete r.request.body
+  if (r?.response?.body !== undefined) delete r.response.body
   if (r?._source) delete r._source
   return r
 }

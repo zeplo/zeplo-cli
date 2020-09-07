@@ -28,8 +28,8 @@ export async function getBody (request: IncomingMessage): Promise<string> {
     request.on('data', (chunk) => {
       body.push(chunk)
     }).on('end', () => {
-      const buffer = Buffer.concat(body).toString('base64')
-      resolve(buffer)
+      const buffer = Buffer.concat(body)
+      resolve(buffer.toString('base64'))
     })
   })
 }
@@ -47,24 +47,13 @@ export function parseRequest (id: string, workspace: string, request: RequestReq
   const received = Date.now() / 1000
   const delay = getDelayFromOptions(options, received)
 
-  let headers = cleanHeaders(request.headers || {})
+  const headers = cleanHeaders(request.headers || {})
   const params = cleanParams(mergedParams, request.headers || {})
   const modUrl = queryString.parseUrl(fullUrl, { parseFragmentIdentifier: true })
   const method = request.method || 'POST'
 
   // Normalize request body
   if (request.body) {
-    if (!headers) headers = {}
-    if (!headers['content-type']) {
-      if (isPlainObject(request.body) || isArray(request.body)) headers['content-type'] = 'application/json'
-      else headers['content-type'] = 'text/plain'
-    }
-
-    if (isPlainObject(request.body) || isArray(request.body)) {
-      request.body = JSON.stringify(request.body)
-    }
-
-    request.body = Buffer.from(request.body).toString('base64')
     request.hasbody = true
   }
 
@@ -131,10 +120,15 @@ export function formatRawOptions (options: any) {
   if (options.retry) {
     // TODO: will this work with null params?
     const [max = 1, backoff = 'FIXED', time = 1] = (options.retry || '').split('|')
+    const parsedMax = parseInt(max, 10)
+    const parsedTime = parseInt(time, 10)
     options.retry = {
-      max,
+      max: isNaN(parsedMax) ? 1 : parsedMax,
       backoff: backoff ? backoff.toUpperCase() : 'FIXED',
-      time,
+      time: isNaN(parsedTime) ? 1 : parsedTime,
+    }
+    if (['FIXED', 'IMMEDIATE', 'EXPONENTIAL'].indexOf(options.retry.backoff) === -1) {
+      options.retry.backoff = 'FIXED'
     }
   }
 
@@ -180,6 +174,12 @@ export function cleanHeaders (headers: any) {
   delete headers['x-ralley-trace']
   delete headers['x-ralley-token']
   delete headers['x-ralley-env']
+
+  delete headers.connection
+  delete headers.forwarded
+  delete headers['x-forwarded-proto']
+  delete headers['accept-encoding']
+
   if (!size(headers)) return undefined
   return headers
 }

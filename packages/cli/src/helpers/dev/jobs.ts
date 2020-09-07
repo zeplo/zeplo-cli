@@ -6,6 +6,7 @@ import { merge, forEach } from 'lodash'
 export interface RequestJob {
   delay: number
   request: Request
+  cursor?: string
 }
 
 export interface PartialRequestJob {
@@ -39,9 +40,10 @@ export async function loadSavedJobs (args: any) {
   merge(jobs, json)
 }
 
-export async function resetSavedJobs (args: any) {
+export async function resetSavedJobs (args: any, hard: boolean) {
   forEach(jobs, (_, jobId) => {
-    delete jobs[jobId]
+    const status = jobs[jobId].request.status
+    if (hard || status === 'SUCCESS' || status === 'ERROR') delete jobs[jobId]
   })
   return jobs
 }

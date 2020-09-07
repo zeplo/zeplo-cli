@@ -18,9 +18,10 @@ export default {
         describe: 'Retain request log (0 = no retain)',
         default: '7d',
       })
-      // .option('memory', {
-      //   describe: 'Jobs will be stored in memory only',
-      // })
+      .option('pollInterval', {
+        describe: 'Determines the frequency of job loop',
+        hidden: true,
+      })
   },
   handler,
 } as CommandModule

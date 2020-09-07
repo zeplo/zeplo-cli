@@ -29,30 +29,30 @@ export default function startServer (args: any) {
     response.setHeader('Content-Type', 'application/json')
     const send = async (data: any|Promise<any>) => response.end(JSON.stringify(await data))
 
-    const req = await parseMessage(request)
+    try {
+      const req = await parseMessage(request)
 
-    if (req.path === '/') {
-      send({
-        url: 'https://ralley.io',
-        name: 'Ralley',
-        version: pkg.version,
-        env: process.env.NODE_ENV || 'development',
-      })
-      return
-    }
+      if (req.path === '/') {
+        send({
+          url: 'https://ralley.io',
+          name: 'Ralley',
+          version: pkg.version,
+          env: process.env.NODE_ENV || 'development',
+        })
+        return
+      }
 
-    if (req.path === '/favicon.ico') {
-      response.statusCode = 204
-      return response.end()
-    }
+      if (req.path === '/favicon.ico') {
+        response.statusCode = 204
+        return response.end()
+      }
 
-    const isQueuePath = req.path && (
-      HTTP_REGEX.test(req.path) ||
+      const isQueuePath = req.path && (
+        HTTP_REGEX.test(req.path) ||
       PATH_REGEX.test(req.path) ||
       LOCAL_REGEX.test(req.path)
-    )
+      )
 
-    try {
       const [_, token] = (args.workspace || 'default').split(':')
       if (token && req.params?._token !== token) {
         throw createError('permission-denied')
@@ -72,8 +72,8 @@ export default function startServer (args: any) {
         return send(await listRequests(filters))
       }
 
-      if (req.path === '/requests/reset') {
-        await resetSavedJobs(args)
+      if (req.path === '/requests/reset' && req.method === 'POST') {
+        await resetSavedJobs(args, req.params?.hard === '1')
         return send({ status: 'DONE' })
       }
 

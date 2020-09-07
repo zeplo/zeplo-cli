@@ -20,14 +20,14 @@ export function getNextSchedule (data: Partial<Request>) {
       const next = schedule.next().valueOf() / 1000
       return next > start ? next : (schedule.next().valueOf() / 1000)
     } catch (e) {
-      throw new Error('requests/invalid-cron')
+      throw new Error('Invalid CRON format')
     }
   })
 
   if (interval) {
     const num = parseFloat(`${interval}`)
     if (Number.isNaN(num)) throw new Error('requests/invalid-interval')
-    if (num < 1) throw new Error('requests/min-interval-exceeded')
+    if (num < 1) throw new Error('Interval exceeds minimum interval of < 1s')
     nextSchedules.push(start + num)
   }
 
