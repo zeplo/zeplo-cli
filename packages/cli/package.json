@@ -1,6 +1,6 @@
 {
   "name": "@zeplo/cli-builder",
-  "version": "0.1.18",
+  "version": "0.2.0",
   "description": "CLI for Zeplo",
   "repository": "https://github.com/zeplo/zeplo-cli",
   "author": "Calum Moore",
