@@ -1,9 +1,9 @@
 {
-  "name": "@ralley/cli",
+  "name": "@zeplo/cli",
   "version": "0.1.18",
-  "description": "CLI for Ralley",
+  "description": "CLI for Zeplo",
   "preferGlobal": true,
-  "repository": "https://github.com/ralleyio/ralley-cli",
+  "repository": "https://github.com/zeplo/zeplo-cli",
   "author": "Calum Moore",
   "license": "MIT",
   "files": [
@@ -12,12 +12,12 @@
   ],
   "scripts": {
     "build": "babel ./src --ignore .spec.js -d dist",
-    "prepare": "yarn run build && cp default.js dist/ralley",
+    "prepare": "yarn run build && cp default.js dist/zeplo",
     "postinstall": "node ./install.js",
     "fix": "yarn eslint \"./src/**/*.{js,jsx}\" --fix"
   },
   "bin": {
-    "ralley": "dist/ralley"
+    "zeplo": "dist/zeplo"
   },
   "dependencies": {
     "assert": "^1.4.1",

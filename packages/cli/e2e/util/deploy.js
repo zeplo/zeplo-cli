@@ -8,7 +8,7 @@ const {
 
 export default async function basicDeploy (exec, relativePath, config, cmds = [], validate = true) {
   const fixturesPath = path.resolve(process.cwd(), relativePath)
-  if (config) fs.outputJson(path.resolve(fixturesPath, './ralley.json'), config)
+  if (config) fs.outputJson(path.resolve(fixturesPath, './zeplo.json'), config)
 
   const run = await exec.run('deploy', relativePath, '--namespace', NAMESPACE, ...cmds)
   const deploy = await (validate ? run.wait() : run.done())

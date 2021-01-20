@@ -12,7 +12,7 @@ export default async function requestWithAuth (args: any, config: AxiosRequestCo
   const endpoint = args.endpoint || args.e || edev || API_URL
   const headers: Record<string, string> = config.headers || {}
   if (token) {
-    headers['X-Ralley-Token'] = token
+    headers['X-Zeplo-Token'] = token
   }
 
   const reqObj = {

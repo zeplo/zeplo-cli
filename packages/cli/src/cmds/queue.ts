@@ -3,7 +3,7 @@ import axios, { AxiosRequestConfig, AxiosError } from 'axios'
 import output from '#/helpers/output'
 import { getDevUrl } from '#/helpers/dev/config'
 
-const { QUEUE_URL = 'https://ralley.to' } = process.env
+const { QUEUE_URL = 'https://zeplo.to' } = process.env
 
 export async function handler (args: any) {
   const queueUrl = (await getDevUrl(args)) || QUEUE_URL
@@ -25,15 +25,15 @@ export async function handler (args: any) {
   }
 
   if (args.delay) {
-    req.headers['X-Ralley-Delay-Until'] = Math.floor(Date.now() / 1000) + args.delay
+    req.headers['X-Zeplo-Delay-Until'] = Math.floor(Date.now() / 1000) + args.delay
   }
 
   if (args.retry) {
-    req.headers['X-Ralley-Retry'] = args.retry
+    req.headers['X-Zeplo-Retry'] = args.retry
   }
 
   if (args.t || args.token) {
-    req.headers['X-Ralley-Token'] = args.t || args.token
+    req.headers['X-Zeplo-Token'] = args.t || args.token
   }
 
   const res = await axios(req).catch((err: AxiosError) => {

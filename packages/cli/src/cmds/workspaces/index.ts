@@ -3,7 +3,7 @@ import list, { handler } from './list'
 import create from './create'
 
 export default {
-  scriptName: 'ralley workspaces',
+  scriptName: 'zeplo workspaces',
   command: 'workspaces',
   desc: 'Manage workspaces',
   builder: (yargs) => {

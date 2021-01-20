@@ -6,10 +6,10 @@ import writeJsonFile from 'write-json-file'
 import { get, set, remove } from 'lodash'
 import { AuthConfig } from '../types'
 
-const { CONFIG_DIR = '.ralley', CONFIG_SUFFIX = '' } = process.env
+const { CONFIG_DIR = '.zeplo', CONFIG_SUFFIX = '' } = process.env
 
 const DEFAULT_AUTH_CONFIG = {
-  _: 'This is your Ralley credentials file. DON\'T SHARE!',
+  _: 'This is your Zeplo credentials file. DON\'T SHARE!',
   credentials: {},
   defaultAuth: null,
 }

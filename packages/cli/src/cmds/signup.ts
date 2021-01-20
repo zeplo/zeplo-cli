@@ -50,6 +50,6 @@ async function handler (args: any) {
 
 export default {
   command: 'signup',
-  desc: 'Sign up to Ralley',
+  desc: 'Sign up to Zeplo',
   handler,
 } as CommandModule

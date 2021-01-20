@@ -35,6 +35,6 @@ async function handler (args: any) {
 
 export default {
   command: 'login',
-  desc: 'Login to Ralley',
+  desc: 'Login to Zeplo',
   handler,
 } as CommandModule

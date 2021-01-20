@@ -20,8 +20,8 @@ const updateCheckMiddleware = async (args: any) => {
 
 const cli = yargs
   .middleware([updateCheckMiddleware])
-  .usage('Usage: ralley <command> [options]')
-  .scriptName('ralley')
+  .usage('Usage: zeplo <command> [options]')
+  .scriptName('zeplo')
   .command(workspaces)
   .command(queue)
   .command(logs)

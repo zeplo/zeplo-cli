@@ -1,5 +1,5 @@
 {
-  "name": "@ralley/cli-root",
+  "name": "@zeplo/cli-root",
   "private": true,
   "scripts": {
     "copy:readme": "cp ./README.md packages/download/README.md",

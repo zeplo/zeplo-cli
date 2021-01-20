@@ -9,7 +9,7 @@ xdescribe('cli.spec', () => {
 
   test('client help command runs and exits', async () => {
     const run = await exec.run('-h').wait()
-    expect(run.stdout).toMatch('Usage: ralley <command> [options]')
+    expect(run.stdout).toMatch('Usage: zeplo <command> [options]')
   })
 
   test('client help command matches snapshot', async () => {

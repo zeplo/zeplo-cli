@@ -1,13 +1,13 @@
 {
-  "name": "@ralley/cli-builder",
+  "name": "@zeplo/cli-builder",
   "version": "0.1.18",
-  "description": "CLI for Ralley",
-  "repository": "https://github.com/ralleyio/ralley-cli",
+  "description": "CLI for Zeplo",
+  "repository": "https://github.com/zeplo/zeplo-cli",
   "author": "Calum Moore",
   "license": "MIT",
   "private": true,
   "main": "dist/index.js",
-  "homepage": "https://github.com/ralleyio/ralley-cli",
+  "homepage": "https://github.com/zeplo/zeplo-cli",
   "scripts": {
     "clean": "rimraf dist/*",
     "test": "jest --testPathPattern=.spec.js",
@@ -17,17 +17,18 @@
     "test:e2e": "NODE_ENV=test jest e2e --maxWorkers=4",
     "test:e2e:staging": "NODE_ENV=production ENV_FILE=.env.test.staging jest e2e --maxWorkers=4",
     "test:e2e:prod": "NODE_ENV=production ENV_FILE=.env.test.prod jest e2e/deploy/image.e2e.js --maxWorkers=20",
-    "gzip": "ls packed/ralley* | xargs gzip",
+    "gzip": "ls packed/zeplo* | xargs gzip",
     "build": "yarn clean && babel src --ignore .spec.js,__mocks__ -d dist --copy-files  --extensions .ts,.js && chmod +x dist/index.js",
     "cmd": "yarn build && NODE_ENV=development node ./dist/index.js",
     "cmd:prd": "yarn build && NODE_ENV=production node ./dist/index.js",
-    "bundle": "rm -rf packed && NODE_ENV=production yarn build && pkg dist/index.js -c package.json -o packed/ralley --options no-warnings && yarn gzip",
+    "bundle": "rm -rf packed && NODE_ENV=production yarn build && pkg dist/index.js -c package.json -o packed/zeplo --options no-warnings && yarn gzip",
     "prepare": "yarn build && yarn bundle",
     "build2": "webpack --context download --config download/webpack.config.js",
     "fix": "yarn eslint \"./src/**/*.{js,jsx}\" --fix"
   },
   "bin": {
-    "ralley": "download/dist/ralley"
+    "zeplo": "download/dist/zeplo",
+    "ralley": "download/dist/zeplo"
   },
   "pkg": {
     "scripts": [

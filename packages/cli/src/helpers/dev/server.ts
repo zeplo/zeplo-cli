@@ -34,8 +34,8 @@ export default function startServer (args: any) {
 
       if (req.path === '/') {
         send({
-          url: 'https://ralley.io',
-          name: 'Ralley',
+          url: 'https://zeplo.io',
+          name: 'Zeplo',
           version: pkg.version,
           env: process.env.NODE_ENV || 'development',
         })
@@ -118,7 +118,7 @@ export default function startServer (args: any) {
     output.space(args)
     output('-----------------------------------------------', args)
     output.space(args)
-    output.success(`Ralley DEV queue for ${workspace} workspace is ready!`, args)
+    output.success(`Zeplo DEV queue for ${workspace} workspace is ready!`, args)
     output.space(args)
     output.accent(`${chalk.bold('Local:')}            http://localhost:${port}`, args)
     if (internalIpAddr) output.accent(`${chalk.bold('On your network:')}  http://${internalIp.v4.sync()}:${port}`, args)

@@ -85,20 +85,20 @@ export function parseRequest (id: string, workspace: string, request: RequestReq
 
 export function getRawOptionsFromHeaderAndParams (headers?: any, params?: any) {
   let p = params
-  if (headers['x-ralley-no-conflict']) {
+  if (headers['x-zeplo-no-conflict']) {
     p = {}
   }
   return {
-    key: headers['x-ralley-key'] || p._key || 'default',
-    delay: headers['x-ralley-delay'] || p._delay,
-    delayuntil: headers['x-ralley-delay-until'] || p._delay_until,
-    retry: headers['x-ralley-retry'] || p._retry,
-    interval: headers['x-ralley-interval'] || p._interval,
-    cron: headers['x-ralley-cron'] || p._cron,
-    throttle: headers['x-ralley-throttle'] || p._throttle,
-    timezone: headers['x-ralley-timezone'] || p._timezone,
-    trace: headers['x-ralley-trace'] || p._trace,
-    env: headers['x-ralley-env'] || p._env,
+    key: headers['x-zeplo-key'] || p._key || 'default',
+    delay: headers['x-zeplo-delay'] || p._delay,
+    delayuntil: headers['x-zeplo-delay-until'] || p._delay_until,
+    retry: headers['x-zeplo-retry'] || p._retry,
+    interval: headers['x-zeplo-interval'] || p._interval,
+    cron: headers['x-zeplo-cron'] || p._cron,
+    throttle: headers['x-zeplo-throttle'] || p._throttle,
+    timezone: headers['x-zeplo-timezone'] || p._timezone,
+    trace: headers['x-zeplo-trace'] || p._trace,
+    env: headers['x-zeplo-env'] || p._env,
   }
 }
 
@@ -145,7 +145,7 @@ export function formatRawOptions (options: any) {
 
 export function cleanParams (params?: any, headers?: any) {
   if (!params) return params
-  if (headers?.['x-ralley-no-conflict'] === '1') return params
+  if (headers?.['x-zeplo-no-conflict'] === '1') return params
   delete params._key
   delete params._delay
   delete params._delay_until
@@ -163,17 +163,17 @@ export function cleanParams (params?: any, headers?: any) {
 
 export function cleanHeaders (headers: any) {
   delete headers.host
-  delete headers['x-ralley-key']
-  delete headers['x-ralley-delay']
-  delete headers['x-ralley-delay-until']
-  delete headers['x-ralley-retry']
-  delete headers['x-ralley-interval']
-  delete headers['x-ralley-cron']
-  delete headers['x-ralley-throttle']
-  delete headers['x-ralley-timezone']
-  delete headers['x-ralley-trace']
-  delete headers['x-ralley-token']
-  delete headers['x-ralley-env']
+  delete headers['x-zeplo-key']
+  delete headers['x-zeplo-delay']
+  delete headers['x-zeplo-delay-until']
+  delete headers['x-zeplo-retry']
+  delete headers['x-zeplo-interval']
+  delete headers['x-zeplo-cron']
+  delete headers['x-zeplo-throttle']
+  delete headers['x-zeplo-timezone']
+  delete headers['x-zeplo-trace']
+  delete headers['x-zeplo-token']
+  delete headers['x-zeplo-env']
 
   delete headers.connection
   delete headers.forwarded

@@ -100,8 +100,8 @@ export async function processRequest (args: any, request: Request) {
       headers: {
         'User-Agent': `${pkg.name}@${pkg.version}`,
         ...headers,
-        'X-Ralley-Start': now,
-        'X-Ralley-Id': request.id,
+        'X-Zeplo-Start': now,
+        'X-Zeplo-Id': request.id,
       },
       // params,
       data: body ? Buffer.from(body, 'base64') : undefined,

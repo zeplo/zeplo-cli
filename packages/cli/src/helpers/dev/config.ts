@@ -10,7 +10,7 @@ export async function getDevUrl (args: any) {
   if (!url) {
     output.error(`Dev server "${workspace}" is not running. 
 
-      ${chalk.white(`Use $ ${chalk.cyan(`ralley dev -w ${workspace}`)}`)}
+      ${chalk.white(`Use $ ${chalk.cyan(`zeplo dev -w ${workspace}`)}`)}
     `, args)
   }
   return url

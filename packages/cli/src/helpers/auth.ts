@@ -4,8 +4,8 @@ import { getAuthConfig } from './config'
 import { AuthArgs } from '../types'
 
 export const AUTH_MSG = `
-  Use ${chalk.cyanBright('$ ralley login')} to login
-  Or ${chalk.cyanBright('$ ralley signup')} to create a new account
+  Use ${chalk.cyanBright('$ zeplo login')} to login
+  Or ${chalk.cyanBright('$ zeplo signup')} to create a new account
 `
 
 export const NO_TOKEN_MSG = `

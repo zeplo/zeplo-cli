@@ -4,7 +4,7 @@ import pause from './pause'
 import unpause from './unpause'
 
 export default {
-  scriptName: 'ralley requests',
+  scriptName: 'zeplo requests',
   command: 'requests',
   desc: 'Manage requests',
   builder: (yargs) => {

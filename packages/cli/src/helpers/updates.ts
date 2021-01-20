@@ -5,15 +5,15 @@ import output from './output'
 import { getBasicConfig, setBasicConfig } from './config'
 import pkg from '../../package.json'
 
-const CLI_RELEASES_URL = 'https://ralley-cli-releases.ralley.io'
+const CLI_RELEASES_URL = 'https://zeplo-cli-releases.zeplo.io'
 const CHECK_EVERY_HOUR = 60 * 60 * 1000
 
 export default async function updateCheck (args: any) {
   const newVersion = await updateAvailable(args)
   if (newVersion) {
     output.space(args)
-    output.accent(`${chalk.white.bgRed.bold('UPDATE AVAILABLE')} Ralley CLI latest version is ${newVersion} (installed v${pkg.version})`, args)
-    output.accent(`Upgrade details can be found at ${chalk.cyan('https://ralley.io/docs/install')}`, args)
+    output.accent(`${chalk.white.bgRed.bold('UPDATE AVAILABLE')} Zeplo CLI latest version is ${newVersion} (installed v${pkg.version})`, args)
+    output.accent(`Upgrade details can be found at ${chalk.cyan('https://zeplo.io/docs/cli')}`, args)
     output.space(args)
   }
   return newVersion
