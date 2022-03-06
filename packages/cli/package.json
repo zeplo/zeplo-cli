@@ -27,8 +27,8 @@
     "fix": "yarn eslint \"./src/**/*.{js,jsx}\" --fix"
   },
   "bin": {
-    "zeplo": "download/dist/zeplo",
-    "ralley": "download/dist/zeplo"
+    "ralley": "download/dist/zeplo",
+    "zeplo": "download/dist/zeplo"
   },
   "pkg": {
     "scripts": [
