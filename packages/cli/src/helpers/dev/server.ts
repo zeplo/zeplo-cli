@@ -1,6 +1,6 @@
 import http, { IncomingMessage, ServerResponse } from 'http'
 import chalk from 'chalk'
-import internalIp from 'internal-ip'
+import { internalIpV4Sync } from 'internal-ip'
 import { size, isString } from 'lodash'
 import output from '../output'
 import pkg from '../../../package.json'
@@ -95,7 +95,7 @@ export default function startServer (args: any) {
           return getResponseBody(parts[1], response)
         }
       }
-    } catch (e) {
+    } catch (e: any) {
       if (!e.statusCode) {
         response.statusCode = 500
         return send({ error: { message: 'Internal server error', __dev_error: e.message } })
@@ -110,7 +110,7 @@ export default function startServer (args: any) {
   })
 
   const stopWorker = worker(args)
-  const internalIpAddr = internalIp.v4.sync()
+  const internalIpAddr = internalIpV4Sync()
 
   // server.setTimeout(15 * 60 * 60 * 1000)
 
@@ -121,7 +121,7 @@ export default function startServer (args: any) {
     output.success(`Zeplo DEV queue for ${workspace} workspace is ready!`, args)
     output.space(args)
     output.accent(`${chalk.bold('Local:')}            http://localhost:${port}`, args)
-    if (internalIpAddr) output.accent(`${chalk.bold('On your network:')}  http://${internalIp.v4.sync()}:${port}`, args)
+    if (internalIpAddr) output.accent(`${chalk.bold('On your network:')}  http://${internalIpAddr}:${port}`, args)
     output.space(args)
     output('-----------------------------------------------', args)
   })

@@ -1,9 +1,7 @@
 import { homedir } from 'os'
-import fs from 'fs-extra'
+import { readJson, existsSync, outputJson } from 'fs-extra'
 import path from 'path'
-import loadJsonFile from 'load-json-file'
-import writeJsonFile from 'write-json-file'
-import { get, set, remove } from 'lodash'
+import { get, set } from 'lodash'
 import { AuthConfig } from '../types'
 
 const { CONFIG_DIR = '.zeplo', CONFIG_SUFFIX = '' } = process.env
@@ -39,8 +37,8 @@ export default function getConfigPath (args: any) {
 
 export async function getAuthConfig (args: any): Promise<AuthConfig|null> {
   const authPath = getAuthConfigPath(args)
-  return fs.existsSync(authPath)
-    ? loadJsonFile(authPath)
+  return existsSync(authPath)
+    ? readJson(authPath)
     : null
 }
 
@@ -64,7 +62,7 @@ export async function addAuthConfig (args: any, username: string, token: string)
   await setBasicConfig(args, 'user.defaultWorkspace', null)
 
   // Save the file
-  return writeJsonFile(authPath, auth)
+  return outputJson(authPath, auth)
 }
 
 export async function removeAuthConfig (args: any) {
@@ -78,7 +76,7 @@ export async function removeAuthConfig (args: any) {
 
   await setBasicConfig(args, 'user', {})
 
-  return writeJsonFile(authPath, auth)
+  return outputJson(authPath, auth)
 }
 
 export async function setBasicConfig (args: any, key: string, value: any) {
@@ -93,18 +91,18 @@ export async function getBasicConfig (args: any, key: string) {
 
 export async function setConfig (path: string, key: string, value: any) {
   let json = {}
-  if (fs.existsSync(path)) {
-    json = await fs.readJson(path)
+  if (existsSync(path)) {
+    json = await readJson(path)
   }
   set(json, key, value)
-  await fs.outputJson(path, json, {
+  await outputJson(path, json, {
     spaces: 2,
   })
   return value
 }
 
 export async function getConfig (path: string, key: string) {
-  if (!fs.existsSync(path)) return null
-  const json = await fs.readJson(path)
+  if (!existsSync(path)) return null
+  const json = await readJson(path)
   return get(json, key)
 }
