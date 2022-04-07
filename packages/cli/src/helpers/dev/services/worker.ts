@@ -4,10 +4,10 @@ import { v4 } from 'uuid'
 import { merge, map } from 'lodash'
 import ms from 'ms'
 import { jobs, saveJobs, loadSavedJobs } from './jobs'
-import { Request } from '#/request'
+import { Request } from '@zeplo/types/request'
 import { getNextSchedule } from './util'
-import output from '../output'
-import pkg from '../../../package.json'
+import output from '../../output'
+import pkg from '../../../../package.json'
 
 let timer: NodeJS.Timeout|null = null
 
@@ -116,7 +116,7 @@ export async function processRequest (args: any, request: Request) {
     request.status = 'SUCCESS'
 
     output.info(`Job success ${request.id}`, args)
-  } catch (e) {
+  } catch (e: any) {
     // TODO: we should output the error somewhere
     output.warn(`Job error ${request.id}: ${e.message}`, args)
 
@@ -124,7 +124,7 @@ export async function processRequest (args: any, request: Request) {
     const totalAttempts = attempts + 1
 
     request.status = 'ERROR'
-    request.message = e.message
+    request.message = e?.message
     request.attempts = 1
 
     if (request.source !== 'REQUEST' && request.trace && jobs[request.trace]) {
@@ -145,13 +145,13 @@ export async function processRequest (args: any, request: Request) {
       output.info(`Retrying failed job ${request.id} in ${ms(next * 1000)} as ${nextId}`, args)
     }
 
-    response = e.response
+    response = e?.response
   }
 
   const responseBody = response?.data ? response.data.toString('base64') : undefined
   request.response = {
     status: response?.status,
-    statusText: response?.statusText,
+    statustext: response?.statusText,
     headers: response?.headers,
     body: responseBody,
     hasbody: !!responseBody,

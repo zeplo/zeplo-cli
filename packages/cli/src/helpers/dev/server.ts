@@ -1,23 +1,19 @@
 import http, { IncomingMessage, ServerResponse } from 'http'
 import chalk from 'chalk'
-import { internalIpV4Sync } from 'internal-ip'
-import { size, isString } from 'lodash'
+import express, { Request, Response, NextFunction } from 'express'
+import cors from 'cors'
+import { createError, ApiError } from '@zeplo/errors'
+import internalIp from 'internal-ip'
 import output from '../output'
-import pkg from '../../../package.json'
-import bulk from './bulk'
-import queue from './queue'
-import { resetSavedJobs } from './jobs'
-import { parseMessage } from './parse'
-import worker from './worker'
-import {
-  listRequests, getRequestById, pauseRequest, playRequest, getRequestBody, getResponseBody,
-} from './requests'
+import pkg, { name, version } from '../../../package.json'
+import worker from './services/worker'
 import { getDevPath, setConfig } from '../config'
-import createError from './errors'
+import queueRouter from './queue'
+import requestRouter from './requests'
 
-const HTTP_REGEX = /^\/https?:\/\/[^#.\/]*[.]/
-const PATH_REGEX = /^\/[^#.\/]*[.]/
-const LOCAL_REGEX = /^\/(https?:\/\/)?localhost/
+// const HTTP_REGEX = /^\/https?:\/\/[^#.\/]*[.]/
+// const PATH_REGEX = /^\/[^#.\/]*[.]/
+// const LOCAL_REGEX = /^\/(https?:\/\/)?localhost/
 
 export default function startServer (args: any) {
   const port = args.p || args.port || 4747
@@ -25,95 +21,61 @@ export default function startServer (args: any) {
 
   setConfig(getDevPath(args), workspace, { url: `http://localhost:${port}` })
 
-  const server = http.createServer(async function requestHandler (request: IncomingMessage, response: ServerResponse) {
-    response.setHeader('Content-Type', 'application/json')
-    const send = async (data: any|Promise<any>) => response.end(JSON.stringify(await data))
+  const app = express()
 
-    try {
-      const req = await parseMessage(request)
+  app.use(cors({
+    allowedHeaders: '*',
+  }))
 
-      if (req.path === '/') {
-        send({
-          url: 'https://zeplo.io',
-          name: 'Zeplo',
-          version: pkg.version,
-          env: process.env.NODE_ENV || 'development',
-        })
-        return
-      }
+  app.get('/', (req, res) => {
+    res.send({
+      version,
+      name,
+      host: process.env.HOSTNAME,
+      date: new Date(),
+    })
+  })
 
-      if (req.path === '/favicon.ico') {
-        response.statusCode = 204
-        return response.end()
-      }
+  app.get('/favicon.ico', (req, res) => {
+    res.sendStatus(204)
+  })
 
-      const isQueuePath = req.path && (
-        HTTP_REGEX.test(req.path) ||
-      PATH_REGEX.test(req.path) ||
-      LOCAL_REGEX.test(req.path)
-      )
+  app.use(queueRouter(args))
+  app.use(requestRouter(args))
 
-      const [_, token] = (args.workspace || 'default').split(':')
-      if (token && req.params?._token !== token) {
-        throw createError('permission-denied')
-      }
+  // Error handler
+  app.use((originalError: any, req: Request, res: Response, next: NextFunction) => {
+    let error: ApiError = originalError
 
-      if (isQueuePath) {
-        return send(await queue(args, req))
-      }
-
-      if (req.path === '/bulk') {
-        return send(await bulk(args, req))
-      }
-
-      if (req.path === '/requests') {
-        const filterParam = isString(req.params?.filters) ? req.params?.filters : null
-        const filters = filterParam && JSON.parse(filterParam)
-        return send(await listRequests(filters))
-      }
-
-      if (req.path === '/requests/reset' && req.method === 'POST') {
-        await resetSavedJobs(args, req.params?.hard === '1')
-        return send({ status: 'DONE' })
-      }
-
-      if (req.path.startsWith('/requests/')) {
-        const parts = req.path.substring(1).split('/')
-        if (size(parts) === 2 && parts[1] && req.method === 'GET') {
-          return send(await getRequestById(parts[1]))
-        }
-        if (size(parts) === 3 && parts[1] && parts[2] === 'inactive' && ['PATCH', 'POST', 'PUT'].indexOf(req.method) > -1) {
-          return send(await pauseRequest(parts[1]))
-        }
-        if (size(parts) === 3 && parts[1] && parts[2] === 'active' && ['PATCH', 'POST', 'PUT'].indexOf(req.method) > -1) {
-          return send(await playRequest(parts[1]))
-        }
-        if (size(parts) === 3 && parts[1] && parts[2] === 'request.body' && req.method === 'GET') {
-          return getRequestBody(parts[1], response)
-        }
-        if (size(parts) === 3 && parts[1] && parts[2] === 'response.body' && req.method === 'GET') {
-          return getResponseBody(parts[1], response)
-        }
-      }
-    } catch (e: any) {
-      if (!e.statusCode) {
-        response.statusCode = 500
-        return send({ error: { message: 'Internal server error', __dev_error: e.message } })
-      }
-
-      response.statusCode = e.statusCode
-      return send({ error: { message: e.message, reason: e.reason, code: e.code } })
+    if (!(error instanceof ApiError)) {
+      error = createError('server-error', {
+        originalError: error,
+      })
     }
 
-    response.statusCode = 404
-    send({ error: { message: 'Not found' } })
+    console.log(error.toJSON())
+
+    const {
+      code, message, data, reason, statusCode,
+    } = error?.toJSON() ?? {}
+
+    const out = {
+      error: {
+        code,
+        message,
+        data,
+        reason,
+      },
+    }
+
+    res.status(statusCode ?? 500).json(out)
   })
 
   const stopWorker = worker(args)
-  const internalIpAddr = internalIpV4Sync()
+  const internalIpAddr = internalIp.v4.sync()
 
   // server.setTimeout(15 * 60 * 60 * 1000)
-
+  const server = http.createServer(app)
   server.listen(port, () => {
     output.space(args)
     output('-----------------------------------------------', args)

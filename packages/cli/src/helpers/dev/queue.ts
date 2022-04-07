@@ -1,31 +1,35 @@
-import { v4 } from 'uuid'
-import ms from 'ms'
-import { RequestRequest } from '#/request'
-import { parseRequest, getDelayFromOptions } from './parse'
-import { jobs } from './jobs'
-import output from '../output'
+import { Router } from 'express'
+import bodyParser from 'body-parser'
+// import contentType from 'content-type'
+import expressAsyncHandler from 'express-async-handler'
+import getRawBody from 'raw-body'
+import { jsonRequestHandler } from '@zeplo/util'
+import { queue } from './services/queue'
+import { bulkHandler } from './services/bulk'
+import { stepHandler } from './services/steps'
 
-export default function queue (args: any, request: RequestRequest) {
-  const id = `${v4()}-iow`
+export function queueRouter (args: any) {
+  const router = Router()
 
-  // TODO: should we get args from prop OR from a token?
-  const [workspace] = (args.workspace || args.dev || 'default').split(':')
+  router.use(expressAsyncHandler(async (req, res, next) => {
+    const isPushUrl = /^\/https?:\/[^#./]*./.test(req.path) || /^\/[^#./]*\./.test(req.path)
+    if (isPushUrl) {
+      req.body = await getRawBody(req, {
+        limit: '15mb',
+        length: req.headers['content-length'],
+        // encoding: contentType.parse(req).parameters.charset,
+      })
+      const json = await queue(args, req)
+      res.json(json)
+    } else {
+      next()
+    }
+  }))
 
-  const req = parseRequest(id, workspace, {
-    ...request,
-    // Remove the leading slash
-    url: request.url.startsWith('/') ? request.url.substring(1) : request.url,
-  })
+  router.all('/bulk', bodyParser.json({ limit: '15mb' }), jsonRequestHandler(async (req) => bulkHandler(args, req)))
+  router.all('/step', bodyParser.json({ limit: '15mb' }), jsonRequestHandler(async (req) => stepHandler(args, req)))
 
-  const delay = getDelayFromOptions(req, req.received)
-
-  jobs[id] = ({
-    delay,
-    request: req,
-  })
-
-  const delaystr = delay > 0 ? `with delay of ${ms((delay - req.received) * 1000)}` : ''
-  output.info(`Received request ${id} ${delaystr}`, args)
-
-  return { id }
+  return router
 }
+
+export default queueRouter

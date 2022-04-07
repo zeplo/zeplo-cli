@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig, AxiosError } from 'axios'
+import axios, { AxiosRequestConfig, AxiosError, AxiosRequestHeaders } from 'axios'
 import getAuth, { AUTH_MSG } from './auth'
 import output from './output'
 import { getDevUrl } from './dev/config'
@@ -10,7 +10,7 @@ export default async function requestWithAuth (args: any, config: AxiosRequestCo
 
   const edev = await getDevUrl(args)
   const endpoint = args.endpoint || args.e || edev || API_URL
-  const headers: Record<string, string> = config.headers || {}
+  const headers: AxiosRequestHeaders = config.headers || {}
   if (token) {
     headers['X-Zeplo-Token'] = token
   }

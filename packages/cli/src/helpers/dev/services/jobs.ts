@@ -1,6 +1,6 @@
 import fs from 'fs-extra'
-import { Request } from '#/request'
-import getConfigPath from '../config'
+import { Request } from '@zeplo/types/request'
+import getConfigPath from '../../config'
 import { merge, forEach } from 'lodash'
 
 export interface RequestJob {
