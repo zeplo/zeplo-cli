@@ -2,7 +2,7 @@ import map from 'lodash/map'
 import omit from 'lodash/omit'
 import moment from 'moment'
 import Cron from 'cron-converter'
-import { Request } from '#/request'
+import { Request } from '@zeplo/types/request'
 
 export function getNextSchedule (data: Partial<Request>) {
   const {

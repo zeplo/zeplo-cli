@@ -20,19 +20,19 @@ export async function handler (args: any) {
     const headerArr = Array.isArray(args.header) ? args.header : [args.header]
     headerArr.forEach((header: string) => {
       const [name, val] = header.split(':')
-      req.headers[name] = val
+      if (req.headers) req.headers[name] = val
     })
   }
 
-  if (args.delay) {
+  if (args.delay && req.headers) {
     req.headers['X-Zeplo-Delay-Until'] = Math.floor(Date.now() / 1000) + args.delay
   }
 
-  if (args.retry) {
+  if (args.retry && req.headers) {
     req.headers['X-Zeplo-Retry'] = args.retry
   }
 
-  if (args.t || args.token) {
+  if ((args.t || args.token) && req.headers) {
     req.headers['X-Zeplo-Token'] = args.t || args.token
   }
 

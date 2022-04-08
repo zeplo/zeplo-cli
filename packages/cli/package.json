@@ -9,7 +9,7 @@
   "main": "dist/index.js",
   "homepage": "https://github.com/zeplo/zeplo-cli",
   "scripts": {
-    "clean": "rimraf dist/*",
+    "clean": "rimraf dist/* &",
     "test": "jest --testPathPattern=.spec.js",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
     "nyc:coverage": "NODE_ENV=test nyc --reporter=html jest ./src",
@@ -51,7 +51,7 @@
     "@types/default-gateway": "^3.0.1",
     "@zeplo/errors": "^2.0.8",
     "@zeplo/types": "^2.0.10",
-    "@zeplo/util": "^2.0.12",
+    "@zeplo/util": "^2.0.14",
     "async-retry": "^1.3.3",
     "axios": "^0.26.0",
     "body-parser": "^1.19.2",

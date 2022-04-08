@@ -19,7 +19,6 @@ export function queue (args: any, request: Request): { id: string } {
   const delay = req.delayuntil ?? 0
 
   jobs[id] = ({
-    delay,
     request: req,
   })
 

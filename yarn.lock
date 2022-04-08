@@ -4845,7 +4845,7 @@ __metadata:
     "@typescript-eslint/parser": ^5.13.0
     "@zeplo/errors": ^2.0.8
     "@zeplo/types": ^2.0.10
-    "@zeplo/util": ^2.0.12
+    "@zeplo/util": ^2.0.14
     async-retry: ^1.3.3
     axios: ^0.26.0
     babel-eslint: ^10.1.0
@@ -5010,9 +5010,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@zeplo/util@npm:^2.0.12":
-  version: 2.0.12
-  resolution: "@zeplo/util@npm:2.0.12"
+"@zeplo/util@npm:^2.0.14":
+  version: 2.0.14
+  resolution: "@zeplo/util@npm:2.0.14"
   dependencies:
     "@zeplo/errors": ^2.0.8
     "@zeplo/types": ^2.0.10
@@ -5020,7 +5020,7 @@ __metadata:
     express-async-handler: ^1.2.0
     lodash: ^4.17.21
     uuid: ^8.3.2
-  checksum: 4cc759a62ce4cab8acfdd285613bb2612e3edba48a48471e4c0806f9b69a363db5caee77183be2685a2021de335a4f7ca64878e6094ef1dedc58e8405cf8906e
+  checksum: b248d883ed8fe389a9fd236a9d3d33e6e183752c282264d4a4588be5c64ddf312361cb464caa321b8a2f72c761d5c02f0eeb5d2dad814a220c497e9adf5a2655
   languageName: node
   linkType: hard
 

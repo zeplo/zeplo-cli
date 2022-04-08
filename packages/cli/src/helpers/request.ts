@@ -3,7 +3,7 @@ import getAuth, { AUTH_MSG } from './auth'
 import output from './output'
 import { getDevUrl } from './dev/config'
 
-const { API_URL } = process.env
+const { API_URL = 'https://zeplo.to' } = process.env
 
 export default async function requestWithAuth (args: any, config: AxiosRequestConfig, requireAuth = true, captureError = true) {
   const token = await getAuth(args, requireAuth && !args.dev)

@@ -3,7 +3,7 @@ import moment from 'moment'
 import ms from 'ms'
 import output from '#/helpers/output'
 import request from '#/helpers/request'
-import { Request } from '#/request'
+import { Request } from '@zeplo/types/request'
 
 export const columns = [{
   name: 'ID',

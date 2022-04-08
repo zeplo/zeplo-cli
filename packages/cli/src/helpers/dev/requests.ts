@@ -10,7 +10,7 @@ export function requestRouter (args: any) {
   const router = Router()
 
   router.get('/requests', jsonRequestHandler(async (req: Request) => {
-    const filterParam = isString(req.params?.filters) ? req.params?.filters : null
+    const filterParam = isString(req.query?.filters) ? req.query?.filters : null
     const filters = filterParam && JSON.parse(filterParam)
     return listRequests(filters)
   }))

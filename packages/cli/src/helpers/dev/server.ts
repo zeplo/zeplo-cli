@@ -15,7 +15,7 @@ import requestRouter from './requests'
 // const PATH_REGEX = /^\/[^#.\/]*[.]/
 // const LOCAL_REGEX = /^\/(https?:\/\/)?localhost/
 
-export default function startServer (args: any) {
+export default async function startServer (args: any) {
   const port = args.p || args.port || 4747
   const workspace = args.w || args.workspace || args.dev || 'default'
 
@@ -92,7 +92,8 @@ export default function startServer (args: any) {
     output.info('Stopping server', args)
     server.close()
     setConfig(getDevPath(args), workspace, undefined)
-    stopWorker()
-    output.info('Successfull exited', args)
+    stopWorker().then(() => {
+      output.info('Successfull exited', args)
+    })
   })
 }

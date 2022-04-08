@@ -7,7 +7,7 @@ import { createError } from '@zeplo/errors'
 export async function getRequestById (requestId: string) {
   const job = await jobs[requestId]
 
-  if (!job) throw createError('not-found')
+  if (!job) throw createError('not-found', { message: `No request with ID: ${requestId}` })
 
   return formatJob(job)
 }
@@ -18,7 +18,7 @@ export async function listRequests (filters: null|Record<string, string>) {
     list = filter(list, (req: any) => !!req &&
       (every(filters, (val, key) => get(req, key) && toString(get(req, key)) === toString(val))))
   }
-  return orderBy(list, ['start'], ['desc'])
+  return orderBy(list, ['start', 'received'], ['desc', 'desc'])
     .slice(0, 30)
 }
 
@@ -26,7 +26,7 @@ export async function pauseRequest (requestId: string) {
   const job = jobs[requestId]
 
   // Validate
-  if (!job) throw createError('not-found')
+  if (!job) throw createError('not-found', { message: `No request with ID: ${requestId}` })
 
   const validState = job.request.status === 'PENDING' || (
     job.request.status === 'ACTIVE' && job.request.source === 'REQUEST' &&
@@ -50,11 +50,11 @@ export async function playRequest (requestId: string) {
   const job = jobs[requestId]
 
   // Validate
-  if (!job) throw createError('not-found')
+  if (!job) throw createError('not-found', { message: `No request with ID: ${requestId}` })
   if (job.request.status !== 'INACTIVE') throw createError('requests/invalid-state')
 
   job.request.status = 'PENDING'
-  job.request.start = Date.now() / 1000
+  // if (job.request.cron || job.request.interval) job.request.start = Date.now() / 1000
 
   return formatJob(job)
 }

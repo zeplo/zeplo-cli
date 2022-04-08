@@ -1,7 +1,7 @@
 import axios from 'axios'
 import moment from 'moment'
 import { v4 } from 'uuid'
-import { merge, map } from 'lodash'
+import { merge, map, forEach } from 'lodash'
 import ms from 'ms'
 import { jobs, saveJobs, loadSavedJobs } from './jobs'
 import { Request } from '@zeplo/types/request'
@@ -12,15 +12,18 @@ import pkg from '../../../../package.json'
 let timer: NodeJS.Timeout|null = null
 
 const { NODE_ENV } = process.env
+let ending = false
 
 export default function worker (args: any) {
   loadSavedJobs(args).then(() => {
     timer = setTimeout(() => { tick(args) }, args.pollInterval ? parseInt(args.pollInterval) : 1000)
   })
   return async () => {
+    ending = true
     output.info('Closing queue and persisting jobs', args)
     if (timer) clearTimeout(timer)
     await saveJobs(args)
+    ending = false
   }
 }
 
@@ -29,10 +32,25 @@ export async function tick (args: any) {
   const retain: string = args.retain || args.r || '7d'
   const retainFor = ms(retain) / 1000
 
-  map(jobs, (job, jobId) => {
-    const { trace, status, source, end } = job.request
+  await Promise.all(map(jobs, async (job, jobId) => {
+    const { start, trace, status, source, end, step, steps, requires } = job.request
 
-    if (job.delay && job.delay > now) return
+    // Queue is ending
+    if (ending) return
+
+    // Job is not scheduled yet
+    if (start > now) return
+
+    // Steps request itself is never run (all child jobs are scheduled immediately)
+    if (steps) return
+
+    // If cursor is present, then this is a schedule parent, that has already been scheduled
+    if (job.cursor) return
+
+    // If this is a step that not should run yet
+    if (step && trace && requires && jobs[trace]?.request.steps?.[step]?.started !== 1) {
+      return
+    }
 
     // Delete expired successful jobs
     if ((status === 'ERROR' ||
@@ -44,7 +62,7 @@ export async function tick (args: any) {
     }
 
     const parentJob = trace ? jobs[trace] : null
-    const allowRun = status === 'PENDING' ||
+    const allowRun = status === 'PENDING' || status === 'ACTIVE' ||
      (status === 'INACTIVE' && source === 'SCHEDULE' && parentJob?.cursor === jobId)
     if (!allowRun) return
 
@@ -57,7 +75,9 @@ export async function tick (args: any) {
         delete jobs[jobId]
       }
     })
-  })
+  }))
+
+  if (ending) return
 
   await saveJobs(args)
   timer = setTimeout(() => { tick(args) }, 1000)
@@ -66,7 +86,7 @@ export async function tick (args: any) {
 export async function processRequest (args: any, request: Request) {
   output.info(`Processing ${request.id} ${request.trace ? `for ${request.trace}` : ''}`, args)
 
-  const { id, status, start, trace, source, _source } = request
+  const { id, status, start, trace, source, step, _source } = request
   const { url, method, headers, body } = request.request
   const { cron, interval } = _source || request
   const now = Date.now() / 1000
@@ -89,7 +109,6 @@ export async function processRequest (args: any, request: Request) {
         // scheduled job immedietely
         // setTimeout(() => tick(args), 0)
       }
-      // console.log(request.status)
 
       if (source === 'REQUEST' || request.status === 'INACTIVE') return
     }
@@ -160,6 +179,10 @@ export async function processRequest (args: any, request: Request) {
   request.end = end
   request.duration = Math.round((end - start) * 1000) / 1000
 
+  if (source === 'STEP' && step && trace && request.status === 'SUCCESS') {
+    await createNextSteps(trace, step)
+  }
+
   return response
 }
 
@@ -188,7 +211,6 @@ export function scheduleNextJob (source: 'RETRY'|'SCHEDULE', request: Request, d
   }, _source, { attempts: (_source?.attempts || 0) + 1 })
 
   jobs[id] = ({
-    delay: delaytime,
     request: {
       ...rest,
       id,
@@ -203,4 +225,31 @@ export function scheduleNextJob (source: 'RETRY'|'SCHEDULE', request: Request, d
   })
 
   return id
+}
+
+export function createNextSteps (parentStepId: string, completedStepId: string) {
+  const parentStep = jobs[parentStepId]
+  if (!parentStep?.request?.steps) return
+
+  const steps = parentStep.request.steps
+  steps[completedStepId].complete = 1
+  let allStepsCompleted = true
+
+  forEach(steps, (step, stepId) => {
+    if (!step.complete) allStepsCompleted = false
+    if (!step.complete && !step.started && step.requires?.[completedStepId]) {
+      let ready = true
+      forEach(step.requires, (_, requiredStepId) => {
+        if (steps[requiredStepId].complete !== 1) ready = false
+      })
+      if (ready) {
+        // This will allow the job to be picked up
+        steps[stepId].started = 1
+      }
+    }
+  })
+
+  if (allStepsCompleted) {
+    parentStep.request.status = 'SUCCESS'
+  }
 }

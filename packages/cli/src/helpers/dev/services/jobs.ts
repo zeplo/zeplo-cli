@@ -4,7 +4,7 @@ import getConfigPath from '../../config'
 import { merge, forEach } from 'lodash'
 
 export interface RequestJob {
-  delay: number
+  // delay: number
   request: Request
   cursor?: string
 }
@@ -23,7 +23,7 @@ export function getJobsPath (args: any) {
 }
 
 export async function saveJobs (args: any) {
-  await fs.outputJson(getJobsPath(args), jobs, {
+  await fs.outputJson(getJobsPath(args), jobs ?? {}, {
     spaces: 2,
   })
   return jobs
@@ -32,10 +32,15 @@ export async function saveJobs (args: any) {
 export async function getSavedJobs (args: any) {
   const jobsPath = getJobsPath(args)
   if (!fs.existsSync(jobsPath)) return
-  return fs.readJson(jobsPath)
+  try {
+    return fs.readJson(jobsPath)
+  } catch (e) {
+    return {}
+  }
 }
 
 export async function loadSavedJobs (args: any) {
+  if (args.reset) return resetSavedJobs(args, true)
   const json = await getSavedJobs(args)
   merge(jobs, json)
 }
@@ -45,5 +50,6 @@ export async function resetSavedJobs (args: any, hard: boolean) {
     const status = jobs[jobId].request.status
     if (hard || status === 'SUCCESS' || status === 'ERROR') delete jobs[jobId]
   })
+  await saveJobs(args)
   return jobs
 }

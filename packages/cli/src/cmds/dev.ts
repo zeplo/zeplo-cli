@@ -18,6 +18,9 @@ export default {
         describe: 'Retain request log (0 = no retain)',
         default: '7d',
       })
+      .option('reset', {
+        describe: 'Reset all data in the dev queue (remove all jobs)',
+      })
       .option('pollInterval', {
         describe: 'Determines the frequency of job loop',
         hidden: true,

@@ -6,12 +6,15 @@ import { jobs } from './jobs'
 
 export function stepHandler (args: any, req: Request) {
   const workspace = getWorkspace(args)
-  const { id, jobs: steps } = createStepsJobs(workspace, req)
+  const { id, request, jobs: steps } = createStepsJobs(workspace, req)
+
+  jobs[id] = { request }
+
+  console.log(steps)
 
   forEach(steps, (step) => {
     jobs[step.id] = {
       request: step,
-      delay: step.delayuntil ?? 0,
     }
   })
 
