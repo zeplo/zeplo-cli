@@ -1,4 +1,4 @@
-# Zeplo Cli
+# Zeplo CLI
 
 [Zeplo](https://zeplo.io) is a managed message queue as a service. Blimey, that's a mouthful. We help you send queued messages without any setup. All you have to do is prefix your request with `zeplo.to/` and we'll queue it for you!
 
