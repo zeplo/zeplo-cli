@@ -23,6 +23,8 @@
     "bundle": "rm -rf packed && NODE_ENV=production yarn build && pkg dist/index.js -c package.json -o packed/zeplo --options no-warnings && yarn gzip",
     "prepare": "yarn build && yarn bundle",
     "build2": "webpack --context download --config download/webpack.config.js",
+    "release:patch": "npm version patch && npm release",
+    "release:minor": "npm version minor && npm release",
     "fix": "yarn eslint \"./src/**/*.{js,jsx}\" --fix"
   },
   "bin": {
