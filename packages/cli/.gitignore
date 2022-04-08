@@ -1,9 +1,0 @@
-.DS_Store
-node_modules
-logs
-*.log
-yarn-debug.log*
-yarn-error.log*
-dist
-notes.md
-coverage
