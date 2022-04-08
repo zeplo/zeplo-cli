@@ -21,7 +21,7 @@
     "cmd": "yarn build && NODE_ENV=development node ./dist/index.js",
     "cmd:prd": "yarn build && NODE_ENV=production node ./dist/index.js",
     "bundle": "rm -rf packed && NODE_ENV=production yarn build && pkg dist/index.js -c package.json -o packed/zeplo --options no-warnings && yarn gzip",
-    "prepare": "yarn build && yarn bundle",
+    "prepare": "yarn build",
     "build2": "webpack --context download --config download/webpack.config.js",
     "release:patch": "npm version patch && npm publish",
     "release:minor": "npm version minor && npm publish",
