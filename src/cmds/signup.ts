@@ -2,7 +2,6 @@ import { CommandModule } from 'yargs'
 import chalk from 'chalk'
 import prompt from 'prompt'
 import util from 'util'
-import request from '#/helpers/request'
 import output from '#/helpers/output'
 import login from '#/helpers/login'
 
@@ -31,19 +30,8 @@ async function handler (args: any) {
     email, password, name,
   } = await promptGet(schema)
 
-  // Signup user
-  await request(args, {
-    method: 'POST',
-    url: '/signup',
-    data: {
-      name,
-      email,
-      password,
-    },
-  }, false)
-
   // Login with user
-  await login(args, email, password)
+  await login(args, email, password, name, true)
 
   output(chalk.green('Successful signup! Welcome!'), args)
 }

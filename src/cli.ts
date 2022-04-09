@@ -6,7 +6,7 @@ import workspaces from './cmds/workspaces'
 import login from './cmds/login'
 import signup from './cmds/signup'
 import logout from './cmds/logout'
-import queue from './cmds/queue'
+// import queue from './cmds/queue'
 import logs from './cmds/requests'
 import config from './cmds/config'
 import dev from './cmds/dev'
@@ -23,7 +23,7 @@ const cli = yargs
   .usage('Usage: zeplo <command> [options]')
   .scriptName('zeplo')
   .command(workspaces)
-  .command(queue)
+  // .command(queue)
   .command(logs)
   .command(config)
   .command(login)

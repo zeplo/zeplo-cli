@@ -2,6 +2,7 @@ import { CommandModule } from 'yargs'
 import axios, { AxiosRequestConfig, AxiosError } from 'axios'
 import output from '#/helpers/output'
 import { getDevUrl } from '#/helpers/dev/config'
+// import requestWithAuth from '#/helpers/request'
 
 const { QUEUE_URL = 'https://zeplo.to' } = process.env
 
@@ -9,12 +10,13 @@ export async function handler (args: any) {
   const queueUrl = (await getDevUrl(args)) || QUEUE_URL
 
   const req = {
-    baseURL: queueUrl,
-    url: args.url,
+    url: args.url.startsWith('/') ? `${queueUrl}/${args.url}` : `${queueUrl}/${args.url}`,
     headers: {},
     data: args.d || args.body,
     method: args.method || 'GET',
   } as AxiosRequestConfig
+
+  console.log('req', req)
 
   if (args.header) {
     const headerArr = Array.isArray(args.header) ? args.header : [args.header]
@@ -36,7 +38,11 @@ export async function handler (args: any) {
     req.headers['X-Zeplo-Token'] = args.t || args.token
   }
 
-  const res = await axios(req).catch((err: AxiosError) => {
+  const res = await axios(args).catch((err: AxiosError) => {
+    if (err?.isAxiosError && err.response?.status === 403) {
+      output.error('Please provide your workspace token', args)
+      return
+    }
     output(err?.response?.data, args)
     output.error(err.message, args)
   })
